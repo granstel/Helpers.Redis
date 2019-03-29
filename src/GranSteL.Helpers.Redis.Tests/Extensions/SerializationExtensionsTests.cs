@@ -42,15 +42,12 @@ namespace GranSteL.Helpers.Redis.Tests.Extensions
         }
 
         [Test]
-        public void Deserialize_Throws_Default()
+        public void Deserialize_Throws_Success()
         {
             var serialized = _fixture.Create<string>();
 
 
-            var result = serialized.Deserialize<object>();
-
-
-            Assert.AreEqual(null, result);
+            Assert.Throws<JsonReaderException>(() => serialized.Deserialize<ILogFixture>());
         }
 
         [Test]
