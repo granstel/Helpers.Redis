@@ -1,4 +1,6 @@
-﻿using Newtonsoft.Json;
+﻿using AutoFixture;
+using GranSteL.Helpers.Redis.Extensions;
+using Newtonsoft.Json;
 using NUnit.Framework;
 
 namespace GranSteL.Helpers.Redis.Tests.Extensions
@@ -45,7 +47,7 @@ namespace GranSteL.Helpers.Redis.Tests.Extensions
             var serialized = _fixture.Create<string>();
 
 
-            var result = serialized.Deserialize<Request>();
+            var result = serialized.Deserialize<object>();
 
 
             Assert.AreEqual(null, result);

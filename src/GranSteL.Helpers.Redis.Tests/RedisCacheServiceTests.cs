@@ -1,7 +1,11 @@
 ﻿using System;
 using System.Threading.Tasks;
+using AutoFixture;
+using GranSteL.Helpers.Redis.Extensions;
+using Moq;
 using Newtonsoft.Json;
 using NUnit.Framework;
+using StackExchange.Redis;
 
 namespace GranSteL.Helpers.Redis.Tests
 {
@@ -173,22 +177,20 @@ namespace GranSteL.Helpers.Redis.Tests
         {
             var key = _fixture.Create<string>();
 
-            var expected = _fixture.Build<Request>()
-                .With(r => r.Text)
-                .Create();
+            var expected = _fixture.Create<object>();
 
             var value = expected.Serialize(_serializerSettings);
 
             _dataBase.Setup(b => b.StringGet(key, CommandFlags.None)).Returns(value);
 
 
-            var result = _target.TryGet(key, out Request data);
+            var result = _target.TryGet(key, out object data);
 
 
             _mockRepository.VerifyAll();
 
             Assert.True(result);
-            Assert.AreEqual(expected.Text, data.Text);
+            Assert.NotNull(data);
         }
 
         #endregion TryGet
