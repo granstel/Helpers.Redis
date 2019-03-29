@@ -343,7 +343,7 @@ namespace GranSteL.Helpers.Redis.Tests
             _dataBase.Setup(b => b.StringGet(key, CommandFlags.None)).Throws<Exception>();
 
 
-            Assert.DoesNotThrow(() => _target.TryGet(key, out object data));
+            Assert.DoesNotThrow(() => _target.TryGet(key, out object _));
 
 
             _mockRepository.VerifyAll();

@@ -36,18 +36,17 @@ namespace GranSteL.Helpers.Redis
 
             var result = false;
 
-            if (data != null)
-            {
-                try
-                {
-                    var value = data.Serialize(_serializerSettings);
+            if (data == null) return false;
 
-                    result = await _dataBase.StringSetAsync(key, value, timeOut);
-                }
-                catch (Exception e)
-                {
-                    _logException?.Invoke(e);
-                }
+            try
+            {
+                var value = data.Serialize(_serializerSettings);
+
+                result = await _dataBase.StringSetAsync(key, value, timeOut);
+            }
+            catch (Exception e)
+            {
+                _logException?.Invoke(e);
             }
 
             return result;

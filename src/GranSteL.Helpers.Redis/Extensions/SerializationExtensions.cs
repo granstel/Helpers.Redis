@@ -16,18 +16,15 @@ namespace GranSteL.Helpers.Redis.Extensions
 
         public static T Deserialize<T>(this object obj, JsonSerializerSettings settings = null)
         {
-            T result = default(T);
-
-            if (obj is T deserialize)
+            switch (obj)
             {
-                result = deserialize;
+                case T deserialize:
+                    return deserialize;
+                case string serialized:
+                    return JsonConvert.DeserializeObject<T>(serialized, settings);
+                default:
+                    return default;
             }
-            else if (obj is string serialized)
-            {
-                result = JsonConvert.DeserializeObject<T>(serialized, settings);
-            }
-
-            return result;
         }
     }
 }
