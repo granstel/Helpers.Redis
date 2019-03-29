@@ -139,7 +139,7 @@ namespace GranSteL.Helpers.Redis.Tests
         }
 
         [Test]
-        public void TryGet_NullValue_false()
+        public void TryGet_DefaultValue_False()
         {
             var key = _fixture.Create<string>();
 
@@ -197,6 +197,25 @@ namespace GranSteL.Helpers.Redis.Tests
             Assert.NotNull(data);
         }
 
+        [Test]
+        public void TryGet_Throws_Success()
+        {
+            var key = _fixture.Create<string>();
+
+            _dataBase.Setup(b => b.StringGet(key, CommandFlags.None)).Throws<Exception>();
+
+            _logger.Setup(l => l.Log(It.IsAny<Exception>()));
+
+
+            var result = _target.TryGet(key, out object data);
+
+
+            _mockRepository.VerifyAll();
+
+            Assert.False(result);
+            Assert.IsNull(data);
+        }
+
         #endregion TryGet
 
         #region Exists
@@ -205,24 +224,6 @@ namespace GranSteL.Helpers.Redis.Tests
         public void Exists_NullKey_Throws()
         {
             Assert.Throws<ArgumentNullException>(() => _target.Exist(null));
-        }
-
-        [Test]
-        public void Exists_Throws_False()
-        {
-            var key = _fixture.Create<string>();
-
-            _dataBase.Setup(b => b.KeyExists(key, CommandFlags.None)).Throws<Exception>();
-
-            _logger.Setup(l => l.Log(It.IsAny<Exception>()));
-
-
-            var result = _target.Exist(key);
-
-
-            _mockRepository.VerifyAll();
-
-            Assert.False(result);
         }
 
         [Test]
@@ -243,6 +244,24 @@ namespace GranSteL.Helpers.Redis.Tests
             Assert.AreEqual(expected, result);
         }
 
+        [Test]
+        public void Exists_Throws_Success()
+        {
+            var key = _fixture.Create<string>();
+
+            _dataBase.Setup(b => b.KeyExists(key, CommandFlags.None)).Throws<Exception>();
+
+            _logger.Setup(l => l.Log(It.IsAny<Exception>()));
+
+
+            var result = _target.Exist(key);
+
+
+            _mockRepository.VerifyAll();
+
+            Assert.False(result);
+        }
+
         #endregion Exists
 
         #region DeleteAsync
@@ -251,24 +270,6 @@ namespace GranSteL.Helpers.Redis.Tests
         public void DeleteAsync_NullKey_Throws()
         {
             Assert.ThrowsAsync<ArgumentNullException>(async () => await _target.DeleteAsync(null));
-        }
-
-        [Test]
-        public async Task DeleteAsync_Throws_False()
-        {
-            var key = _fixture.Create<string>();
-
-            _dataBase.Setup(b => b.KeyDeleteAsync(key, CommandFlags.None)).Throws<Exception>();
-
-            _logger.Setup(l => l.Log(It.IsAny<Exception>()));
-
-
-            var result = await _target.DeleteAsync(key);
-
-
-            _mockRepository.VerifyAll();
-
-            Assert.False(result);
         }
 
         [Test]
@@ -289,6 +290,97 @@ namespace GranSteL.Helpers.Redis.Tests
             Assert.AreEqual(expected, result);
         }
 
+        [Test]
+        public async Task DeleteAsync_Throws_Success()
+        {
+            var key = _fixture.Create<string>();
+
+            _dataBase.Setup(b => b.KeyDeleteAsync(key, CommandFlags.None)).Throws<Exception>();
+
+            _logger.Setup(l => l.Log(It.IsAny<Exception>()));
+
+
+            var result = await _target.DeleteAsync(key);
+
+
+            _mockRepository.VerifyAll();
+
+            Assert.False(result);
+        }
+
         #endregion DeleteAsync
+
+        #region WithoutLogging
+
+        [Test]
+        public void AddAsync_WithoutLogging_Throws_Success()
+        {
+            _target = new RedisCacheService(_dataBase.Object);
+
+            var key = _fixture.Create<string>();
+            var data = _fixture.Create<object>();
+            var timeOut = _fixture.Create<TimeSpan>();
+
+            var value = data.Serialize(_serializerSettings);
+
+            _dataBase.Setup(b => b.StringSetAsync(key, value, timeOut, When.Always, CommandFlags.None))
+                .Throws<Exception>();
+
+
+            Assert.DoesNotThrowAsync(async () => await _target.AddAsync(key, data, timeOut));
+
+
+            _mockRepository.VerifyAll();
+        }
+
+        [Test]
+        public void TryGet_WithoutLogging_Throws_Success()
+        {
+            _target = new RedisCacheService(_dataBase.Object);
+
+            var key = _fixture.Create<string>();
+
+            _dataBase.Setup(b => b.StringGet(key, CommandFlags.None)).Throws<Exception>();
+
+
+            Assert.DoesNotThrow(() => _target.TryGet(key, out object data));
+
+
+            _mockRepository.VerifyAll();
+        }
+
+        [Test]
+        public void Exists_WithoutLogging_Throws_Success()
+        {
+            _target = new RedisCacheService(_dataBase.Object);
+
+            var key = _fixture.Create<string>();
+
+            _dataBase.Setup(b => b.KeyExists(key, CommandFlags.None)).Throws<Exception>();
+
+
+            Assert.DoesNotThrow(() => _target.Exist(key));
+
+
+            _mockRepository.VerifyAll();
+        }
+
+        [Test]
+        public void DeleteAsync_WithoutLogging_Throws_Success()
+        {
+            _target = new RedisCacheService(_dataBase.Object);
+
+            var key = _fixture.Create<string>();
+
+            _dataBase.Setup(b => b.KeyDeleteAsync(key, CommandFlags.None)).Throws<Exception>();
+
+
+            Assert.DoesNotThrowAsync(async () => await _target.DeleteAsync(key));
+
+
+            _mockRepository.VerifyAll();
+        }
+
+        #endregion WithoutLogging
     }
 }
