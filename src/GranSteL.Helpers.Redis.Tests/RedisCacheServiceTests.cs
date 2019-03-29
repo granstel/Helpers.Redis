@@ -15,6 +15,7 @@ namespace GranSteL.Helpers.Redis.Tests
         private MockRepository _mockRepository;
 
         private Mock<IDatabase> _dataBase;
+        private Mock<ILogFixture> _logger;
 
         private RedisCacheService _target;
 
@@ -32,8 +33,9 @@ namespace GranSteL.Helpers.Redis.Tests
             _mockRepository = new MockRepository(MockBehavior.Strict);
 
             _dataBase = _mockRepository.Create<IDatabase>();
+            _logger = _mockRepository.Create<ILogFixture>();
 
-            _target = new RedisCacheService(_dataBase.Object);
+            _target = new RedisCacheService(_dataBase.Object, _logger.Object.Log);
 
             _fixture = new Fixture { OmitAutoProperties = true };
         }
@@ -114,6 +116,8 @@ namespace GranSteL.Helpers.Redis.Tests
 
             _dataBase.Setup(b => b.StringSetAsync(key, value, timeOut, When.Always, CommandFlags.None))
                 .Throws<Exception>();
+
+            _logger.Setup(l => l.Log(It.IsAny<Exception>()));
 
 
             var result = await _target.AddAsync(key, data, timeOut);
@@ -210,6 +214,8 @@ namespace GranSteL.Helpers.Redis.Tests
 
             _dataBase.Setup(b => b.KeyExists(key, CommandFlags.None)).Throws<Exception>();
 
+            _logger.Setup(l => l.Log(It.IsAny<Exception>()));
+
 
             var result = _target.Exist(key);
 
@@ -253,6 +259,8 @@ namespace GranSteL.Helpers.Redis.Tests
             var key = _fixture.Create<string>();
 
             _dataBase.Setup(b => b.KeyDeleteAsync(key, CommandFlags.None)).Throws<Exception>();
+
+            _logger.Setup(l => l.Log(It.IsAny<Exception>()));
 
 
             var result = await _target.DeleteAsync(key);
