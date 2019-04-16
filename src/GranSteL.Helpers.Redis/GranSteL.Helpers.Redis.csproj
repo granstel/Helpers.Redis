@@ -6,10 +6,9 @@
     <Title>Redis helpers</Title>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Description>
-      RedisCacheService:
-      Simple wrapper on StackExchange.Redis, that can help you to create, read, check existing, and delete data at JSON format with own serialization (based on Newtonsoft.Json).
-    </Description>
+    <Description>RedisCacheService:
+Simple wrapper on StackExchange.Redis, that can help you to create, read, check existing, and delete data at JSON format with own serialization (based on Newtonsoft.Json).
+</Description>
     <Copyright>GranSteL</Copyright>
     <Authors>GranSteL</Authors>
     <PackageLicenseUrl>https://github.com/granstel/Helpers.Redis/blob/master/LICENSE</PackageLicenseUrl>
