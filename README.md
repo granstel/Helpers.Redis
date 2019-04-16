@@ -1,4 +1,4 @@
-# Helpers.Redis
+Helpers.Redis
 ================
 ![alt text](https://ci.appveyor.com/api/projects/status/scnpxtc7itofgyy2?svg=true "master branch status badge")
 
