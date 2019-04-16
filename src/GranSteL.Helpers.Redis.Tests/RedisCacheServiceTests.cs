@@ -15,7 +15,6 @@ namespace GranSteL.Helpers.Redis.Tests
         private MockRepository _mockRepository;
 
         private Mock<IDatabase> _dataBase;
-        private Mock<ILogFixture> _logger;
 
         private RedisCacheService _target;
 
@@ -33,9 +32,8 @@ namespace GranSteL.Helpers.Redis.Tests
             _mockRepository = new MockRepository(MockBehavior.Strict);
 
             _dataBase = _mockRepository.Create<IDatabase>();
-            _logger = _mockRepository.Create<ILogFixture>();
 
-            _target = new RedisCacheService(_dataBase.Object, _logger.Object.Log);
+            _target = new RedisCacheService(_dataBase.Object);
 
             _fixture = new Fixture { OmitAutoProperties = true };
         }
@@ -106,7 +104,7 @@ namespace GranSteL.Helpers.Redis.Tests
         }
 
         [Test]
-        public async Task AddAsync_Throws_Success()
+        public void AddAsync_Throws_Success()
         {
             var key = _fixture.Create<string>();
             var data = _fixture.Create<object>();
@@ -117,15 +115,11 @@ namespace GranSteL.Helpers.Redis.Tests
             _dataBase.Setup(b => b.StringSetAsync(key, value, timeOut, When.Always, CommandFlags.None))
                 .Throws<Exception>();
 
-            _logger.Setup(l => l.Log(It.IsAny<Exception>()));
 
-
-            var result = await _target.AddAsync(key, data, timeOut);
+            Assert.ThrowsAsync<Exception>(() => _target.AddAsync(key, data, timeOut));
 
 
             _mockRepository.VerifyAll();
-
-            Assert.False(result);
         }
 
         #endregion AddAsync
@@ -133,13 +127,17 @@ namespace GranSteL.Helpers.Redis.Tests
         #region TryGet
 
         [Test]
-        public void TryGet_NullKey_Throws()
+        [TestCase(true)]
+        [TestCase(false)]
+        public void TryGet_NullKey_Throws(bool throwException)
         {
-            Assert.Throws<ArgumentNullException>(() => _target.TryGet(null, out object _));
+            Assert.Throws<ArgumentNullException>(() => _target.TryGet(null, out object _, throwException));
         }
 
         [Test]
-        public void TryGet_DefaultValue_False()
+        [TestCase(true)]
+        [TestCase(false)]
+        public void TryGet_DefaultValue_False(bool throwException)
         {
             var key = _fixture.Create<string>();
 
@@ -148,7 +146,7 @@ namespace GranSteL.Helpers.Redis.Tests
             _dataBase.Setup(b => b.StringGet(key, CommandFlags.None)).Returns(value);
 
 
-            var result = _target.TryGet(key, out object data);
+            var result = _target.TryGet(key, out object data, throwException);
 
 
             _mockRepository.VerifyAll();
@@ -158,7 +156,9 @@ namespace GranSteL.Helpers.Redis.Tests
         }
 
         [Test]
-        public void TryGet_StringValue_Success()
+        [TestCase(true)]
+        [TestCase(false)]
+        public void TryGet_StringValue_Success(bool throwException)
         {
             var key = _fixture.Create<string>();
 
@@ -167,7 +167,7 @@ namespace GranSteL.Helpers.Redis.Tests
             _dataBase.Setup(b => b.StringGet(key, CommandFlags.None)).Returns(value);
 
 
-            var result = _target.TryGet(key, out string data);
+            var result = _target.TryGet(key, out string data, throwException);
 
 
             _mockRepository.VerifyAll();
@@ -177,7 +177,9 @@ namespace GranSteL.Helpers.Redis.Tests
         }
 
         [Test]
-        public void TryGet_ObjectValue_Success()
+        [TestCase(true)]
+        [TestCase(false)]
+        public void TryGet_ObjectValue_Success(bool throwException)
         {
             var key = _fixture.Create<string>();
 
@@ -188,7 +190,7 @@ namespace GranSteL.Helpers.Redis.Tests
             _dataBase.Setup(b => b.StringGet(key, CommandFlags.None)).Returns(value);
 
 
-            var result = _target.TryGet(key, out object data);
+            var result = _target.TryGet(key, out object data, throwException);
 
 
             _mockRepository.VerifyAll();
@@ -198,16 +200,32 @@ namespace GranSteL.Helpers.Redis.Tests
         }
 
         [Test]
-        public void TryGet_Throws_Success()
+        public void TryGet_ThrowException_Throws()
         {
             var key = _fixture.Create<string>();
 
             _dataBase.Setup(b => b.StringGet(key, CommandFlags.None)).Throws<Exception>();
 
-            _logger.Setup(l => l.Log(It.IsAny<Exception>()));
+            object data = null;
 
 
-            var result = _target.TryGet(key, out object data);
+            Assert.Throws<Exception>(() => _target.TryGet(key, out data, true));
+
+
+            _mockRepository.VerifyAll();
+
+            Assert.IsNull(data);
+        }
+
+        [Test]
+        public void TryGet_NotThrowException_False()
+        {
+            var key = _fixture.Create<string>();
+
+            _dataBase.Setup(b => b.StringGet(key, CommandFlags.None)).Throws<Exception>();
+
+
+            var result = _target.TryGet(key, out object data, false);
 
 
             _mockRepository.VerifyAll();
@@ -223,7 +241,7 @@ namespace GranSteL.Helpers.Redis.Tests
         [Test]
         public void Exists_NullKey_Throws()
         {
-            Assert.Throws<ArgumentNullException>(() => _target.Exist(null));
+            Assert.Throws<ArgumentNullException>(() => _target.Exists(null));
         }
 
         [Test]
@@ -236,7 +254,7 @@ namespace GranSteL.Helpers.Redis.Tests
             _dataBase.Setup(b => b.KeyExists(key, CommandFlags.None)).Returns(expected);
 
 
-            var result = _target.Exist(key);
+            var result = _target.Exists(key);
 
 
             _mockRepository.VerifyAll();
@@ -251,15 +269,11 @@ namespace GranSteL.Helpers.Redis.Tests
 
             _dataBase.Setup(b => b.KeyExists(key, CommandFlags.None)).Throws<Exception>();
 
-            _logger.Setup(l => l.Log(It.IsAny<Exception>()));
 
-
-            var result = _target.Exist(key);
+            Assert.Throws<Exception>(() => _target.Exists(key));
 
 
             _mockRepository.VerifyAll();
-
-            Assert.False(result);
         }
 
         #endregion Exists
@@ -291,96 +305,19 @@ namespace GranSteL.Helpers.Redis.Tests
         }
 
         [Test]
-        public async Task DeleteAsync_Throws_Success()
+        public void DeleteAsync_Throws_Success()
         {
             var key = _fixture.Create<string>();
 
             _dataBase.Setup(b => b.KeyDeleteAsync(key, CommandFlags.None)).Throws<Exception>();
 
-            _logger.Setup(l => l.Log(It.IsAny<Exception>()));
 
-
-            var result = await _target.DeleteAsync(key);
+            Assert.ThrowsAsync<Exception>(() => _target.DeleteAsync(key));
 
 
             _mockRepository.VerifyAll();
-
-            Assert.False(result);
         }
 
         #endregion DeleteAsync
-
-        #region WithoutLogging
-
-        [Test]
-        public void AddAsync_WithoutLogging_Throws_Success()
-        {
-            _target = new RedisCacheService(_dataBase.Object);
-
-            var key = _fixture.Create<string>();
-            var data = _fixture.Create<object>();
-            var timeOut = _fixture.Create<TimeSpan>();
-
-            var value = data.Serialize(_serializerSettings);
-
-            _dataBase.Setup(b => b.StringSetAsync(key, value, timeOut, When.Always, CommandFlags.None))
-                .Throws<Exception>();
-
-
-            Assert.DoesNotThrowAsync(async () => await _target.AddAsync(key, data, timeOut));
-
-
-            _mockRepository.VerifyAll();
-        }
-
-        [Test]
-        public void TryGet_WithoutLogging_Throws_Success()
-        {
-            _target = new RedisCacheService(_dataBase.Object);
-
-            var key = _fixture.Create<string>();
-
-            _dataBase.Setup(b => b.StringGet(key, CommandFlags.None)).Throws<Exception>();
-
-
-            Assert.DoesNotThrow(() => _target.TryGet(key, out object _));
-
-
-            _mockRepository.VerifyAll();
-        }
-
-        [Test]
-        public void Exists_WithoutLogging_Throws_Success()
-        {
-            _target = new RedisCacheService(_dataBase.Object);
-
-            var key = _fixture.Create<string>();
-
-            _dataBase.Setup(b => b.KeyExists(key, CommandFlags.None)).Throws<Exception>();
-
-
-            Assert.DoesNotThrow(() => _target.Exist(key));
-
-
-            _mockRepository.VerifyAll();
-        }
-
-        [Test]
-        public void DeleteAsync_WithoutLogging_Throws_Success()
-        {
-            _target = new RedisCacheService(_dataBase.Object);
-
-            var key = _fixture.Create<string>();
-
-            _dataBase.Setup(b => b.KeyDeleteAsync(key, CommandFlags.None)).Throws<Exception>();
-
-
-            Assert.DoesNotThrowAsync(async () => await _target.DeleteAsync(key));
-
-
-            _mockRepository.VerifyAll();
-        }
-
-        #endregion WithoutLogging
     }
 }

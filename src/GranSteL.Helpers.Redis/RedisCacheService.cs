@@ -10,19 +10,15 @@ namespace GranSteL.Helpers.Redis
     {
         private readonly IDatabase _dataBase;
 
-        private readonly Action<Exception> _logException;
-
         private readonly JsonSerializerSettings _serializerSettings = new JsonSerializerSettings
         {
             NullValueHandling = NullValueHandling.Ignore,
             TypeNameHandling = TypeNameHandling.Auto
         };
 
-        public RedisCacheService(IDatabase dataBase, Action<Exception> logException = null, JsonSerializerSettings serializerSettings = null)
+        public RedisCacheService(IDatabase dataBase, JsonSerializerSettings serializerSettings = null)
         {
             _dataBase = dataBase;
-
-            _logException = logException;
 
             if (serializerSettings != null)
             {
@@ -34,31 +30,20 @@ namespace GranSteL.Helpers.Redis
         {
             ValidateKey(key);
 
-            var result = false;
-
             if (data == null) return false;
 
-            try
-            {
-                var value = data.Serialize(_serializerSettings);
+            var value = data.Serialize(_serializerSettings);
 
-                result = await _dataBase.StringSetAsync(key, value, timeOut);
-            }
-            catch (Exception e)
-            {
-                _logException?.Invoke(e);
-            }
-
-            return result;
+            return await _dataBase.StringSetAsync(key, value, timeOut);
         }
 
-        public bool TryGet<T>(string key, out T data)
+        public bool TryGet<T>(string key, out T data, bool throwException)
         {
             ValidateKey(key);
 
             var result = false;
 
-            data = default(T);
+            data = default;
 
             try
             {
@@ -71,48 +56,27 @@ namespace GranSteL.Helpers.Redis
                     result = true;
                 }
             }
-            catch (Exception e)
+            catch(Exception)
             {
-                _logException?.Invoke(e);
+                if(throwException)
+                    throw;
             }
 
             return result;
         }
 
-        public bool Exist(string key)
+        public bool Exists(string key)
         {
             ValidateKey(key);
 
-            var result = false;
-
-            try
-            {
-                result = _dataBase.KeyExists(key);
-            }
-            catch (Exception e)
-            {
-                _logException?.Invoke(e);
-            }
-
-            return result;
+            return _dataBase.KeyExists(key);
         }
 
         public async Task<bool> DeleteAsync(string key)
         {
             ValidateKey(key);
 
-            var result = false;
-
-            try
-            {
-                result = await _dataBase.KeyDeleteAsync(key);
-            }
-            catch (Exception e)
-            {
-                _logException?.Invoke(e);
-            }
-
-            return result;
+            return await _dataBase.KeyDeleteAsync(key);
         }
 
         private void ValidateKey(string key)

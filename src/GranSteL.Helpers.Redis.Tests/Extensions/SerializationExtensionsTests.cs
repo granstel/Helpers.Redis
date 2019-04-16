@@ -47,7 +47,7 @@ namespace GranSteL.Helpers.Redis.Tests.Extensions
             var serialized = _fixture.Create<string>();
 
 
-            Assert.Throws<JsonReaderException>(() => serialized.Deserialize<ILogFixture>());
+            Assert.Throws<JsonReaderException>(() => serialized.Deserialize<RedisCacheService>());
         }
 
         [Test]
