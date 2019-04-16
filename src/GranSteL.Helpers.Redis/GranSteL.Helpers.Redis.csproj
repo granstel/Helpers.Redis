@@ -1,8 +1,26 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
-    <LangVersion>latest</LangVersion>
+    <LangVersion>7.1</LangVersion>
+    <Title>Redis helpers</Title>
+    <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <Description>
+      RedisCacheService:
+      Simple wrapper on StackExchange.Redis, that can help you to create, read, check existing, and delete data at JSON format with own serialization (based on Newtonsoft.Json).
+    </Description>
+    <Copyright>GranSteL</Copyright>
+    <Authors>GranSteL</Authors>
+    <PackageLicenseUrl>https://github.com/granstel/Helpers.Redis/blob/master/LICENSE</PackageLicenseUrl>
+    <PackageProjectUrl>https://github.com/granstel/Helpers.Redis</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/granstel/Helpers.Redis</RepositoryUrl>
+    <PackageTags>Redis, Owned, InstancePerMatchingLifetimeScope</PackageTags>
+    <IncludeSymbols>true</IncludeSymbols>
+    <AssemblyVersion>1.0.0.0</AssemblyVersion>
+    <FileVersion>1.0.0.0</FileVersion>
+    <PackageReleaseNotes>Simple wrapper on StackExchange.Redis, that can help you to create, read, check existing, and delete data at JSON format with own serialization (based on Newtonsoft.Json).</PackageReleaseNotes>
+    <Version>1.0.0</Version>
   </PropertyGroup>
 
   <ItemGroup>
