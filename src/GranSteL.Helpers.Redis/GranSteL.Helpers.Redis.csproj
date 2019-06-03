@@ -18,8 +18,8 @@ Simple wrapper on StackExchange.Redis, that can help you to create, read, check 
     <IncludeSymbols>true</IncludeSymbols>
     <AssemblyVersion>1.0.0.0</AssemblyVersion>
     <FileVersion>1.0.0.0</FileVersion>
-    <PackageReleaseNotes>Simple wrapper on StackExchange.Redis, that can help you to create, read, check existing, and delete data at JSON format with own serialization (based on Newtonsoft.Json).</PackageReleaseNotes>
-    <Version>1.0.0</Version>
+    <PackageReleaseNotes>Add generic method "Get", add method "ExistsAsync"</PackageReleaseNotes>
+    <Version>1.0.1</Version>
   </PropertyGroup>
 
   <ItemGroup>
