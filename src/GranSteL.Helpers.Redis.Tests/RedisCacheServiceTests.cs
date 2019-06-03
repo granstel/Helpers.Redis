@@ -33,7 +33,7 @@ namespace GranSteL.Helpers.Redis.Tests
 
             _dataBase = _mockRepository.Create<IDatabase>();
 
-            _target = new RedisCacheService(_dataBase.Object);
+            _target = new RedisCacheService(_dataBase.Object, _serializerSettings);
 
             _fixture = new Fixture();
         }
@@ -127,9 +127,33 @@ namespace GranSteL.Helpers.Redis.Tests
         #region Get
 
         [Test]
+        public void GetAsync_NullKey_Throws()
+        {
+            Assert.ThrowsAsync<ArgumentNullException>(() => _target.GetAsync<object>(null));
+        }
+
+        [Test]
         public void Get_NullKey_Throws()
         {
             Assert.Throws<ArgumentNullException>(() => _target.Get<object>(null));
+        }
+
+        [Test]
+        public async Task GetAsync_StringValue_Success()
+        {
+            var key = _fixture.Create<string>();
+
+            var value = _fixture.Create<string>();
+
+            _dataBase.Setup(b => b.StringGetAsync(key, CommandFlags.None)).ReturnsAsync(value);
+
+
+            var data = await _target.GetAsync<string>(key);
+
+
+            _mockRepository.VerifyAll();
+
+            Assert.AreEqual(value, data);
         }
 
         [Test]
@@ -148,6 +172,28 @@ namespace GranSteL.Helpers.Redis.Tests
             _mockRepository.VerifyAll();
 
             Assert.AreEqual(value, data);
+        }
+
+        [Test]
+        public async Task GetAsync_ObjectValue_Success()
+        {
+            var key = _fixture.Create<string>();
+
+            var expected = _fixture.Create<TestType>();
+
+            var value = expected.Serialize(_serializerSettings);
+
+            _dataBase.Setup(b => b.StringGetAsync(key, CommandFlags.None)).ReturnsAsync(value);
+
+
+            var data = await _target.GetAsync<TestType>(key);
+
+
+            _mockRepository.VerifyAll();
+
+            Assert.NotNull(data);
+            Assert.AreEqual(expected.Property, data.Property);
+            Assert.AreEqual(expected.Field, data.Field);
         }
 
         [Test]
@@ -170,6 +216,20 @@ namespace GranSteL.Helpers.Redis.Tests
             Assert.NotNull(data);
             Assert.AreEqual(expected.Property, data.Property);
             Assert.AreEqual(expected.Field, data.Field);
+        }
+
+        [Test]
+        public void GetAsync_ThrowException_Throws()
+        {
+            var key = _fixture.Create<string>();
+
+            _dataBase.Setup(b => b.StringGetAsync(key, CommandFlags.None)).Throws<Exception>();
+
+
+            Assert.ThrowsAsync<Exception>(() => _target.GetAsync<object>(key));
+
+
+            _mockRepository.VerifyAll();
         }
 
         [Test]

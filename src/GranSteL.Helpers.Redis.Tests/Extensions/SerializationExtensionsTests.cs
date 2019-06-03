@@ -73,5 +73,17 @@ namespace GranSteL.Helpers.Redis.Tests.Extensions
 
             Assert.AreEqual(expected, result);
         }
+
+        [Test]
+        public void Deserialize_AnotherType_Null()
+        {
+            var expected = _fixture.Build<TestType2>().OmitAutoProperties().Create();
+
+
+            var result = expected.Deserialize<TestType>();
+
+
+            Assert.IsNull(result);
+        }
     }
 }
