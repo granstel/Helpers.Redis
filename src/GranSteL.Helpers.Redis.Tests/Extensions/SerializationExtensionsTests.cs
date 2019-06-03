@@ -13,7 +13,7 @@ namespace GranSteL.Helpers.Redis.Tests.Extensions
         [SetUp]
         public void InitTest()
         {
-            _fixture = new Fixture { OmitAutoProperties = true };
+            _fixture = new Fixture();
         }
 
         [Test]
@@ -47,7 +47,7 @@ namespace GranSteL.Helpers.Redis.Tests.Extensions
             var serialized = _fixture.Create<string>();
 
 
-            Assert.Throws<JsonReaderException>(() => serialized.Deserialize<RedisCacheService>());
+            Assert.Throws<JsonReaderException>(() => serialized.Deserialize<TestType>());
         }
 
         [Test]
@@ -57,6 +57,18 @@ namespace GranSteL.Helpers.Redis.Tests.Extensions
 
 
             var result = expected.Deserialize<string>();
+
+
+            Assert.AreEqual(expected, result);
+        }
+
+        [Test]
+        public void Deserialize_Object_Deserialize()
+        {
+            var expected = _fixture.Create<TestType>();
+
+
+            var result = expected.Deserialize<TestType>();
 
 
             Assert.AreEqual(expected, result);

@@ -35,7 +35,7 @@ namespace GranSteL.Helpers.Redis.Tests
 
             _target = new RedisCacheService(_dataBase.Object);
 
-            _fixture = new Fixture { OmitAutoProperties = true };
+            _fixture = new Fixture();
         }
 
         #region AddAsync
@@ -124,6 +124,70 @@ namespace GranSteL.Helpers.Redis.Tests
 
         #endregion AddAsync
 
+        #region Get
+
+        [Test]
+        public void Get_NullKey_Throws()
+        {
+            Assert.Throws<ArgumentNullException>(() => _target.Get<object>(null));
+        }
+
+        [Test]
+        public void Get_StringValue_Success()
+        {
+            var key = _fixture.Create<string>();
+
+            var value = _fixture.Create<string>();
+
+            _dataBase.Setup(b => b.StringGet(key, CommandFlags.None)).Returns(value);
+
+
+            var data = _target.Get<string>(key);
+
+
+            _mockRepository.VerifyAll();
+
+            Assert.AreEqual(value, data);
+        }
+
+        [Test]
+        public void Get_ObjectValue_Success()
+        {
+            var key = _fixture.Create<string>();
+
+            var expected = _fixture.Create<TestType>();
+
+            var value = expected.Serialize(_serializerSettings);
+
+            _dataBase.Setup(b => b.StringGet(key, CommandFlags.None)).Returns(value);
+
+
+            var data = _target.Get<TestType>(key);
+
+
+            _mockRepository.VerifyAll();
+
+            Assert.NotNull(data);
+            Assert.AreEqual(expected.Property, data.Property);
+            Assert.AreEqual(expected.Field, data.Field);
+        }
+
+        [Test]
+        public void Get_ThrowException_Throws()
+        {
+            var key = _fixture.Create<string>();
+
+            _dataBase.Setup(b => b.StringGet(key, CommandFlags.None)).Throws<Exception>();
+
+
+            Assert.Throws<Exception>(() => _target.Get<object>(key));
+
+
+            _mockRepository.VerifyAll();
+        }
+
+        #endregion
+
         #region TryGet
 
         [Test]
@@ -183,20 +247,22 @@ namespace GranSteL.Helpers.Redis.Tests
         {
             var key = _fixture.Create<string>();
 
-            var expected = _fixture.Create<object>();
+            var expected = _fixture.Create<TestType>();
 
             var value = expected.Serialize(_serializerSettings);
 
             _dataBase.Setup(b => b.StringGet(key, CommandFlags.None)).Returns(value);
 
 
-            var result = _target.TryGet(key, out object data, throwException);
+            var result = _target.TryGet(key, out TestType data, throwException);
 
 
             _mockRepository.VerifyAll();
 
             Assert.True(result);
             Assert.NotNull(data);
+            Assert.AreEqual(expected.Property, data.Property);
+            Assert.AreEqual(expected.Field, data.Field);
         }
 
         [Test]
@@ -239,9 +305,33 @@ namespace GranSteL.Helpers.Redis.Tests
         #region Exists
 
         [Test]
+        public void ExistsAsync_NullKey_Throws()
+        {
+            Assert.ThrowsAsync<ArgumentNullException>(() => _target.ExistsAsync(null));
+        }
+
+        [Test]
         public void Exists_NullKey_Throws()
         {
             Assert.Throws<ArgumentNullException>(() => _target.Exists(null));
+        }
+
+        [Test]
+        [TestCase(true)]
+        [TestCase(false)]
+        public async Task ExistsAsync_DifferentValues_Success(bool expected)
+        {
+            var key = _fixture.Create<string>();
+
+            _dataBase.Setup(b => b.KeyExistsAsync(key, CommandFlags.None)).ReturnsAsync(expected);
+
+
+            var result = await _target.ExistsAsync(key);
+
+
+            _mockRepository.VerifyAll();
+
+            Assert.AreEqual(expected, result);
         }
 
         [Test]
@@ -260,6 +350,20 @@ namespace GranSteL.Helpers.Redis.Tests
             _mockRepository.VerifyAll();
 
             Assert.AreEqual(expected, result);
+        }
+
+        [Test]
+        public void ExistsAsync_Throws_Success()
+        {
+            var key = _fixture.Create<string>();
+
+            _dataBase.Setup(b => b.KeyExistsAsync(key, CommandFlags.None)).Throws<Exception>();
+
+
+            Assert.ThrowsAsync<Exception>(() => _target.ExistsAsync(key));
+
+
+            _mockRepository.VerifyAll();
         }
 
         [Test]

@@ -34,10 +34,26 @@ namespace GranSteL.Helpers.Redis
 
             var value = data.Serialize(_serializerSettings);
 
-            return await _dataBase.StringSetAsync(key, value, timeOut);
+            return await _dataBase.StringSetAsync(key, value, timeOut).ConfigureAwait(false);
         }
 
-        public bool TryGet<T>(string key, out T data, bool throwException)
+        public T Get<T>(string key)
+        {
+            ValidateKey(key);
+
+            var data = default(T);
+
+            var value = _dataBase.StringGet(key).ToString();
+
+            if (!string.IsNullOrEmpty(value))
+            {
+                data = value.Deserialize<T>(_serializerSettings);
+            }
+
+            return data;
+        }
+
+        public bool TryGet<T>(string key, out T data, bool throwException = false)
         {
             ValidateKey(key);
 
@@ -47,12 +63,10 @@ namespace GranSteL.Helpers.Redis
 
             try
             {
-                var value = _dataBase.StringGet(key).ToString();
+                data = Get<T>(key);
 
-                if (!string.IsNullOrEmpty(value))
+                if(data != null)
                 {
-                    data = value.Deserialize<T>(_serializerSettings);
-
                     result = true;
                 }
             }
@@ -63,6 +77,13 @@ namespace GranSteL.Helpers.Redis
             }
 
             return result;
+        }
+
+        public async Task<bool> ExistsAsync(string key)
+        {
+            ValidateKey(key);
+
+            return await _dataBase.KeyExistsAsync(key).ConfigureAwait(false);
         }
 
         public bool Exists(string key)
@@ -76,7 +97,7 @@ namespace GranSteL.Helpers.Redis
         {
             ValidateKey(key);
 
-            return await _dataBase.KeyDeleteAsync(key);
+            return await _dataBase.KeyDeleteAsync(key).ConfigureAwait(false);
         }
 
         private void ValidateKey(string key)
