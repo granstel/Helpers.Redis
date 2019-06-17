@@ -14,12 +14,12 @@ Simple wrapper on StackExchange.Redis, that can help you to create, read, check 
     <PackageLicenseUrl>https://github.com/granstel/Helpers.Redis/blob/master/LICENSE</PackageLicenseUrl>
     <PackageProjectUrl>https://github.com/granstel/Helpers.Redis</PackageProjectUrl>
     <RepositoryUrl>https://github.com/granstel/Helpers.Redis</RepositoryUrl>
-    <PackageTags>Redis, serialization, cache</PackageTags>
+    <PackageTags>Redis helper, serialization, cache, redis</PackageTags>
     <IncludeSymbols>true</IncludeSymbols>
     <AssemblyVersion>1.0.0.0</AssemblyVersion>
     <FileVersion>1.0.0.0</FileVersion>
-    <PackageReleaseNotes>Added syncronous "Add" method</PackageReleaseNotes>
-    <Version>1.0.4</Version>
+    <PackageReleaseNotes>Updated StackExchange.Redis and Newtonsoft.Json libraries</PackageReleaseNotes>
+    <Version>1.0.5</Version>
   </PropertyGroup>
 
   <ItemGroup>
