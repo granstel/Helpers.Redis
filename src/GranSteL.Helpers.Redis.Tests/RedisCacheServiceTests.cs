@@ -38,12 +38,18 @@ namespace GranSteL.Helpers.Redis.Tests
             _fixture = new Fixture();
         }
 
-        #region AddAsync
+        #region Add
 
         [Test]
         public void AddAsync_NullKey_Throws()
         {
             Assert.ThrowsAsync<ArgumentNullException>(async () => await _target.AddAsync(null, null));
+        }
+
+        [Test]
+        public void Add_NullKey_Throws()
+        {
+            Assert.Throws<ArgumentNullException>(() => _target.Add(null, null));
         }
 
         [Test]
@@ -53,6 +59,18 @@ namespace GranSteL.Helpers.Redis.Tests
 
 
             var result = await _target.AddAsync(key, null);
+
+
+            Assert.False(result);
+        }
+
+        [Test]
+        public void Add_NullData_False()
+        {
+            var key = _fixture.Create<string>();
+
+
+            var result = _target.Add(key, null);
 
 
             Assert.False(result);
@@ -72,6 +90,27 @@ namespace GranSteL.Helpers.Redis.Tests
 
 
             var result = await _target.AddAsync(key, value, timeOut);
+
+
+            _mockRepository.VerifyAll();
+
+            Assert.AreEqual(expected, result);
+        }
+
+        [Test]
+        [TestCase(true)]
+        [TestCase(false)]
+        public void Add_String_Success(bool expected)
+        {
+            var key = _fixture.Create<string>();
+            var value = _fixture.Create<string>();
+            var timeOut = _fixture.Create<TimeSpan>();
+
+            _dataBase.Setup(b => b.StringSet(key, value, timeOut, When.Always, CommandFlags.None))
+                .Returns(() => expected);
+
+
+            var result = _target.Add(key, value, timeOut);
 
 
             _mockRepository.VerifyAll();
@@ -104,6 +143,30 @@ namespace GranSteL.Helpers.Redis.Tests
         }
 
         [Test]
+        [TestCase(true)]
+        [TestCase(false)]
+        public void Add_Object_Success(bool expected)
+        {
+            var key = _fixture.Create<string>();
+            var data = _fixture.Create<object>();
+            var timeOut = _fixture.Create<TimeSpan>();
+
+            var value = data.Serialize(_serializerSettings);
+
+            _dataBase.Setup(b => b.StringSet(key, value, timeOut, When.Always, CommandFlags.None))
+                .Returns(() => expected);
+
+
+            var result = _target.Add(key, data, timeOut);
+
+
+            _mockRepository.VerifyAll();
+
+            Assert.AreEqual(expected, result);
+
+        }
+
+        [Test]
         public void AddAsync_Throws_Success()
         {
             var key = _fixture.Create<string>();
@@ -122,7 +185,26 @@ namespace GranSteL.Helpers.Redis.Tests
             _mockRepository.VerifyAll();
         }
 
-        #endregion AddAsync
+        [Test]
+        public void Add_Throws_Success()
+        {
+            var key = _fixture.Create<string>();
+            var data = _fixture.Create<object>();
+            var timeOut = _fixture.Create<TimeSpan>();
+
+            var value = data.Serialize(_serializerSettings);
+
+            _dataBase.Setup(b => b.StringSet(key, value, timeOut, When.Always, CommandFlags.None))
+                .Throws<Exception>();
+
+
+            Assert.Throws<Exception>(() => _target.Add(key, data, timeOut));
+
+
+            _mockRepository.VerifyAll();
+        }
+
+        #endregion Add
 
         #region Get
 

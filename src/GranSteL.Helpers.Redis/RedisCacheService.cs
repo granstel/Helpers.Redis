@@ -37,6 +37,17 @@ namespace GranSteL.Helpers.Redis
             return await _dataBase.StringSetAsync(key, value, timeOut).ConfigureAwait(false);
         }
 
+        public bool Add(string key, object data, TimeSpan? timeOut = null)
+        {
+            ValidateKey(key);
+
+            if (data == null) return false;
+
+            var value = data.Serialize(_serializerSettings);
+
+            return _dataBase.StringSet(key, value, timeOut);
+        }
+
         public async Task<T> GetAsync<T>(string key)
         {
             ValidateKey(key);
