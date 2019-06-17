@@ -18,8 +18,8 @@ Simple wrapper on StackExchange.Redis, that can help you to create, read, check 
     <IncludeSymbols>true</IncludeSymbols>
     <AssemblyVersion>1.0.0.0</AssemblyVersion>
     <FileVersion>1.0.0.0</FileVersion>
-    <PackageReleaseNotes>Add generic method "Get", add method "ExistsAsync"</PackageReleaseNotes>
-    <Version>1.0.1</Version>
+    <PackageReleaseNotes>Add asynchronous "Get" method (GetAsync)</PackageReleaseNotes>
+    <Version>1.0.3</Version>
   </PropertyGroup>
 
   <ItemGroup>
