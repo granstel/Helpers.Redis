@@ -23,8 +23,8 @@ Simple wrapper on StackExchange.Redis, that can help you to create, read, check 
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Newtonsoft.Json" Version="12.0.1" />
-    <PackageReference Include="StackExchange.Redis" Version="2.0.571" />
+    <PackageReference Include="Newtonsoft.Json" Version="12.0.2" />
+    <PackageReference Include="StackExchange.Redis" Version="2.0.601" />
   </ItemGroup>
 
 </Project>
