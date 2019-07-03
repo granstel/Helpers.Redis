@@ -1,5 +1,4 @@
 Helpers.Redis
-================
 [![Build status](https://ci.appveyor.com/api/projects/status/scnpxtc7itofgyy2?svg=true)](https://ci.appveyor.com/project/granstel/helpers-redis)
 
 RedisCacheService:
