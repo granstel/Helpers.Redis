@@ -1,6 +1,6 @@
 Helpers.Redis
 ================
-![alt text](https://ci.appveyor.com/api/projects/status/scnpxtc7itofgyy2?svg=true "master branch status badge")
+[![Build status](https://ci.appveyor.com/api/projects/status/scnpxtc7itofgyy2?svg=true)](https://ci.appveyor.com/project/granstel/helpers-redis)
 
 RedisCacheService:
 Simple wrapper on StackExchange.Redis, that can help you to create, read, check existing, and delete data at JSON format with own serialization (based on Newtonsoft.Json).
