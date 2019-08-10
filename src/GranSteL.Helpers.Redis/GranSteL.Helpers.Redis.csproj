@@ -18,8 +18,8 @@ Simple wrapper on StackExchange.Redis, that can help you to create, read, check 
     <IncludeSymbols>true</IncludeSymbols>
     <AssemblyVersion>1.0.0.0</AssemblyVersion>
     <FileVersion>1.0.0.0</FileVersion>
-    <PackageReleaseNotes>Updated StackExchange.Redis and Newtonsoft.Json libraries</PackageReleaseNotes>
-    <Version>1.0.5</Version>
+    <PackageReleaseNotes>Added optional key prefix</PackageReleaseNotes>
+    <Version>1.0.6</Version>
   </PropertyGroup>
 
   <ItemGroup>
