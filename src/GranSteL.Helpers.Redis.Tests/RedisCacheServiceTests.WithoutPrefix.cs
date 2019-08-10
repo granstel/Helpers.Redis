@@ -10,7 +10,7 @@ using StackExchange.Redis;
 namespace GranSteL.Helpers.Redis.Tests
 {
     [TestFixture]
-    public class RedisCacheServiceTests
+    public class RedisCacheServiceTestsWithoutPrefix
     {
         private MockRepository _mockRepository;
 
@@ -33,7 +33,7 @@ namespace GranSteL.Helpers.Redis.Tests
 
             _dataBase = _mockRepository.Create<IDatabase>();
 
-            _target = new RedisCacheService(_dataBase.Object, _serializerSettings);
+            _target = new RedisCacheService(_dataBase.Object, null, _serializerSettings);
 
             _fixture = new Fixture();
         }

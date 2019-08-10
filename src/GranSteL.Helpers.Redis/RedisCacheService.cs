@@ -9,6 +9,7 @@ namespace GranSteL.Helpers.Redis
     public class RedisCacheService : IRedisCacheService
     {
         private readonly IDatabase _dataBase;
+        private readonly string _keyPrefix;
 
         private readonly JsonSerializerSettings _serializerSettings = new JsonSerializerSettings
         {
@@ -16,9 +17,10 @@ namespace GranSteL.Helpers.Redis
             TypeNameHandling = TypeNameHandling.Auto
         };
 
-        public RedisCacheService(IDatabase dataBase, JsonSerializerSettings serializerSettings = null)
+        public RedisCacheService(IDatabase dataBase, string keyPrefix = null, JsonSerializerSettings serializerSettings = null)
         {
             _dataBase = dataBase;
+            _keyPrefix = keyPrefix;
 
             if (serializerSettings != null)
             {
@@ -34,6 +36,8 @@ namespace GranSteL.Helpers.Redis
 
             var value = data.Serialize(_serializerSettings);
 
+            key = $"{_keyPrefix}{key}";
+
             return await _dataBase.StringSetAsync(key, value, timeOut).ConfigureAwait(false);
         }
 
@@ -45,6 +49,8 @@ namespace GranSteL.Helpers.Redis
 
             var value = data.Serialize(_serializerSettings);
 
+            key = $"{_keyPrefix}{key}";
+
             return _dataBase.StringSet(key, value, timeOut);
         }
 
@@ -53,6 +59,8 @@ namespace GranSteL.Helpers.Redis
             ValidateKey(key);
 
             var data = default(T);
+
+            key = $"{_keyPrefix}{key}";
 
             var value = await _dataBase.StringGetAsync(key);
 
@@ -71,6 +79,8 @@ namespace GranSteL.Helpers.Redis
             ValidateKey(key);
 
             var data = default(T);
+
+            key = $"{_keyPrefix}{key}";
 
             var value = _dataBase.StringGet(key).ToString();
 
@@ -112,6 +122,8 @@ namespace GranSteL.Helpers.Redis
         {
             ValidateKey(key);
 
+            key = $"{_keyPrefix}{key}";
+
             return await _dataBase.KeyExistsAsync(key).ConfigureAwait(false);
         }
 
@@ -119,12 +131,16 @@ namespace GranSteL.Helpers.Redis
         {
             ValidateKey(key);
 
+            key = $"{_keyPrefix}{key}";
+
             return _dataBase.KeyExists(key);
         }
 
         public async Task<bool> DeleteAsync(string key)
         {
             ValidateKey(key);
+
+            key = $"{_keyPrefix}{key}";
 
             return await _dataBase.KeyDeleteAsync(key).ConfigureAwait(false);
         }
