@@ -7,7 +7,11 @@ namespace GranSteL.Helpers.Redis
     {
         Task<bool> AddAsync(string key, object data, TimeSpan? timeOut = null);
 
+        Task<bool> TryAddAsync(string key, object data, TimeSpan? timeOut = null, bool throwException = false);
+
         bool Add(string key, object data, TimeSpan? timeOut = null);
+
+        bool TryAdd(string key, object data, TimeSpan? timeOut = null, bool throwException = false);
 
         Task<T> GetAsync<T>(string key);
 

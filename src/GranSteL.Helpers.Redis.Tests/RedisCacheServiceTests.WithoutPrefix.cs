@@ -167,7 +167,7 @@ namespace GranSteL.Helpers.Redis.Tests
         }
 
         [Test]
-        public void AddAsync_Throws_Success()
+        public void AddAsync_Exception_Throws()
         {
             var key = _fixture.Create<string>();
             var data = _fixture.Create<object>();
@@ -186,7 +186,7 @@ namespace GranSteL.Helpers.Redis.Tests
         }
 
         [Test]
-        public void Add_Throws_Success()
+        public void Add_Exception_Throws()
         {
             var key = _fixture.Create<string>();
             var data = _fixture.Create<object>();
@@ -202,6 +202,110 @@ namespace GranSteL.Helpers.Redis.Tests
 
 
             _mockRepository.VerifyAll();
+        }
+
+        [Test]
+        [TestCase(true)]
+        [TestCase(false)]
+        public async Task TryAddAsync_Object_Success(bool expected)
+        {
+            var key = _fixture.Create<string>();
+            var data = _fixture.Create<object>();
+            var timeOut = _fixture.Create<TimeSpan>();
+
+            var value = data.Serialize(_serializerSettings);
+
+            _dataBase.Setup(b => b.StringSetAsync(key, value, timeOut, When.Always, CommandFlags.None))
+                .ReturnsAsync(() => expected);
+
+
+            var result = await _target.TryAddAsync(key, data, timeOut);
+
+
+            _mockRepository.VerifyAll();
+
+            Assert.AreEqual(expected, result);
+        }
+
+        [Test]
+        [TestCase(true)]
+        [TestCase(false)]
+        public void TryAdd_Object_Success(bool expected)
+        {
+            var key = _fixture.Create<string>();
+            var data = _fixture.Create<object>();
+            var timeOut = _fixture.Create<TimeSpan>();
+
+            var value = data.Serialize(_serializerSettings);
+
+            _dataBase.Setup(b => b.StringSet(key, value, timeOut, When.Always, CommandFlags.None))
+                .Returns(() => expected);
+
+
+            var result = _target.TryAdd(key, data, timeOut);
+
+
+            _mockRepository.VerifyAll();
+
+            Assert.AreEqual(expected, result);
+        }
+
+        [Test]
+        public async Task TryAddAsync_NotThrowException_False()
+        {
+            var key = _fixture.Create<string>();
+            var data = _fixture.Create<object>();
+            var timeOut = _fixture.Create<TimeSpan>();
+
+            var value = data.Serialize(_serializerSettings);
+
+            _dataBase.Setup(b => b.StringSetAsync(key, value, timeOut, When.Always, CommandFlags.None)).Throws<Exception>();
+
+
+            var result = await _target.TryAddAsync(key, data, timeOut);
+
+
+            _mockRepository.VerifyAll();
+
+            Assert.False(result);
+        }
+
+        [Test]
+        public async Task TryAddAsync_Exception_Throws()
+        {
+            var key = _fixture.Create<string>();
+            var data = _fixture.Create<object>();
+            var timeOut = _fixture.Create<TimeSpan>();
+
+            var value = data.Serialize(_serializerSettings);
+
+            _dataBase.Setup(b => b.StringSetAsync(key, value, timeOut, When.Always, CommandFlags.None)).Throws<Exception>();
+
+
+            Assert.ThrowsAsync<Exception>(() => _target.TryAddAsync(key, data, timeOut, true));
+
+
+            _mockRepository.VerifyAll();
+        }
+
+        [Test]
+        public void TryAdd_NotThrowException_False()
+        {
+            var key = _fixture.Create<string>();
+            var data = _fixture.Create<object>();
+            var timeOut = _fixture.Create<TimeSpan>();
+
+            var value = data.Serialize(_serializerSettings);
+
+            _dataBase.Setup(b => b.StringSet(key, value, timeOut, When.Always, CommandFlags.None)).Throws<Exception>();
+
+
+            var result = _target.TryAdd(key, data, timeOut);
+
+
+            _mockRepository.VerifyAll();
+
+            Assert.False(result);
         }
 
         #endregion Add
@@ -433,7 +537,7 @@ namespace GranSteL.Helpers.Redis.Tests
             _dataBase.Setup(b => b.StringGet(key, CommandFlags.None)).Throws<Exception>();
 
 
-            var result = _target.TryGet(key, out object data, false);
+            var result = _target.TryGet(key, out object data);
 
 
             _mockRepository.VerifyAll();

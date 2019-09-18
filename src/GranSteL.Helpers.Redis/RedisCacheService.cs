@@ -41,6 +41,25 @@ namespace GranSteL.Helpers.Redis
             return await _dataBase.StringSetAsync(key, value, timeOut).ConfigureAwait(false);
         }
 
+        public async Task<bool> TryAddAsync(string key, object data, TimeSpan? timeOut = null, bool throwException = false)
+        {
+            ValidateKey(key);
+
+            var result = false;
+
+            try
+            {
+                result = await AddAsync(key, data, timeOut);
+            }
+            catch (Exception)
+            {
+                if (throwException)
+                    throw;
+            }
+
+            return result;
+        }
+
         public bool Add(string key, object data, TimeSpan? timeOut = null)
         {
             ValidateKey(key);
@@ -52,6 +71,25 @@ namespace GranSteL.Helpers.Redis
             key = $"{_keyPrefix}{key}";
 
             return _dataBase.StringSet(key, value, timeOut);
+        }
+
+        public bool TryAdd(string key, object data, TimeSpan? timeOut = null, bool throwException = false)
+        {
+            ValidateKey(key);
+
+            var result = false;
+
+            try
+            {
+                result = Add(key, data, timeOut);
+            }
+            catch (Exception)
+            {
+                if (throwException)
+                    throw;
+            }
+
+            return result;
         }
 
         public async Task<T> GetAsync<T>(string key)
