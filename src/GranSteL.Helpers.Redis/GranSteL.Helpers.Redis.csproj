@@ -18,8 +18,8 @@ Simple wrapper on StackExchange.Redis, that can help you to create, read, check 
     <IncludeSymbols>true</IncludeSymbols>
     <AssemblyVersion>1.0.0.0</AssemblyVersion>
     <FileVersion>1.0.0.0</FileVersion>
-    <PackageReleaseNotes>Added new methods: TryAdd and TryAddASync</PackageReleaseNotes>
-    <Version>1.0.7</Version>
+    <PackageReleaseNotes>If key isn't specified then throws NullKeyException</PackageReleaseNotes>
+    <Version>1.0.8</Version>
   </PropertyGroup>
 
   <ItemGroup>
