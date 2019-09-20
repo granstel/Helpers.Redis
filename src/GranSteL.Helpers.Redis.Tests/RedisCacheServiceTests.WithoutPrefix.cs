@@ -204,6 +204,10 @@ namespace GranSteL.Helpers.Redis.Tests
             _mockRepository.VerifyAll();
         }
 
+        #endregion Add
+
+        #region TryAdd
+
         [Test]
         [TestCase(true)]
         [TestCase(false)]
@@ -271,7 +275,7 @@ namespace GranSteL.Helpers.Redis.Tests
         }
 
         [Test]
-        public async Task TryAddAsync_Exception_Throws()
+        public void TryAddAsync_Exception_Throws()
         {
             var key = _fixture.Create<string>();
             var data = _fixture.Create<object>();
@@ -308,7 +312,25 @@ namespace GranSteL.Helpers.Redis.Tests
             Assert.False(result);
         }
 
-        #endregion Add
+        [Test]
+        public void TryAdd_Exception_Throws()
+        {
+            var key = _fixture.Create<string>();
+            var data = _fixture.Create<object>();
+            var timeOut = _fixture.Create<TimeSpan>();
+
+            var value = data.Serialize(_serializerSettings);
+
+            _dataBase.Setup(b => b.StringSet(key, value, timeOut, When.Always, CommandFlags.None)).Throws<Exception>();
+
+
+            Assert.Throws<Exception>(() => _target.TryAdd(key, data, timeOut, true));
+
+
+            _mockRepository.VerifyAll();
+        }
+
+        #endregion TryAdd
 
         #region Get
 

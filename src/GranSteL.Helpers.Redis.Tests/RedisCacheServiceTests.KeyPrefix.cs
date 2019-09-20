@@ -71,28 +71,6 @@ namespace GranSteL.Helpers.Redis.Tests
         }
 
         [Test]
-        public void AddAsync_Exception_Throws()
-        {
-            var key = _fixture.Create<string>();
-            var data = _fixture.Create<object>();
-            var timeOut = _fixture.Create<TimeSpan>();
-
-            var value = data.Serialize(_serializerSettings);
-
-            var expectedKey = $"{_keyPrefix}{key}";
-
-            _dataBase.Setup(b => b.StringSetAsync(expectedKey, value, timeOut, When.Always, CommandFlags.None))
-                .Throws<Exception>();
-
-
-            Assert.ThrowsAsync<Exception>(() => _target.AddAsync(key, data, timeOut));
-
-
-            _mockRepository.VerifyAll();
-
-        }
-
-        [Test]
         [TestCase(true)]
         [TestCase(false)]
         public async Task TryAddAsync_Object_Success(bool expected)
@@ -115,28 +93,6 @@ namespace GranSteL.Helpers.Redis.Tests
             _mockRepository.VerifyAll();
 
             Assert.AreEqual(expected, result);
-        }
-
-        [Test]
-        public async Task TryAddAsync_Throws_False()
-        {
-            var key = _fixture.Create<string>();
-            var data = _fixture.Create<object>();
-            var timeOut = _fixture.Create<TimeSpan>();
-
-            var value = data.Serialize(_serializerSettings);
-
-            var expectedKey = $"{_keyPrefix}{key}";
-
-            _dataBase.Setup(b => b.StringSetAsync(expectedKey, value, timeOut, When.Always, CommandFlags.None)).Throws<Exception>();
-
-
-            var result = await _target.TryAddAsync(key, data, timeOut);
-
-
-            _mockRepository.VerifyAll();
-
-            Assert.False(result);
         }
 
         [Test]
@@ -165,27 +121,6 @@ namespace GranSteL.Helpers.Redis.Tests
         }
 
         [Test]
-        public void Add_Exception_Throws()
-        {
-            var key = _fixture.Create<string>();
-            var data = _fixture.Create<object>();
-            var timeOut = _fixture.Create<TimeSpan>();
-
-            var value = data.Serialize(_serializerSettings);
-
-            var expectedKey = $"{_keyPrefix}{key}";
-
-            _dataBase.Setup(b => b.StringSet(expectedKey, value, timeOut, When.Always, CommandFlags.None))
-                .Throws<Exception>();
-
-
-            Assert.Throws<Exception>(() => _target.Add(key, data, timeOut));
-
-
-            _mockRepository.VerifyAll();
-        }
-
-        [Test]
         [TestCase(true)]
         [TestCase(false)]
         public void TryAdd_Object_Success(bool expected)
@@ -208,28 +143,6 @@ namespace GranSteL.Helpers.Redis.Tests
             _mockRepository.VerifyAll();
 
             Assert.AreEqual(expected, result);
-        }
-
-        [Test]
-        public void TryAdd_Throws_False()
-        {
-            var key = _fixture.Create<string>();
-            var data = _fixture.Create<object>();
-            var timeOut = _fixture.Create<TimeSpan>();
-
-            var value = data.Serialize(_serializerSettings);
-
-            var expectedKey = $"{_keyPrefix}{key}";
-
-            _dataBase.Setup(b => b.StringSet(expectedKey, value, timeOut, When.Always, CommandFlags.None)).Throws<Exception>();
-
-
-            var result = _target.TryAdd(key, data, timeOut);
-
-
-            _mockRepository.VerifyAll();
-
-            Assert.False(result);
         }
 
         #endregion Add
