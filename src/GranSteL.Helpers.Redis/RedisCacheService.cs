@@ -43,21 +43,21 @@ namespace GranSteL.Helpers.Redis
 
         public async Task<bool> TryAddAsync(string key, object data, TimeSpan? timeOut = null, bool throwException = false)
         {
-            ValidateKey(key);
-
-            var result = false;
-
             try
             {
-                result = await AddAsync(key, data, timeOut);
+                return await AddAsync(key, data, timeOut);
+            }
+            catch (NullKeyException)
+            {
+                throw;
             }
             catch (Exception)
             {
                 if (throwException)
                     throw;
-            }
 
-            return result;
+                return false;
+            }
         }
 
         public bool Add(string key, object data, TimeSpan? timeOut = null)
@@ -75,21 +75,21 @@ namespace GranSteL.Helpers.Redis
 
         public bool TryAdd(string key, object data, TimeSpan? timeOut = null, bool throwException = false)
         {
-            ValidateKey(key);
-
-            var result = false;
-
             try
             {
-                result = Add(key, data, timeOut);
+                return Add(key, data, timeOut);
+            }
+            catch (NullKeyException)
+            {
+                throw;
             }
             catch (Exception)
             {
                 if (throwException)
                     throw;
-            }
 
-            return result;
+                return false;
+            }
         }
 
         public async Task<T> GetAsync<T>(string key)
@@ -132,10 +132,6 @@ namespace GranSteL.Helpers.Redis
 
         public bool TryGet<T>(string key, out T data, bool throwException = false)
         {
-            ValidateKey(key);
-
-            var result = false;
-
             data = default;
 
             try
@@ -144,16 +140,20 @@ namespace GranSteL.Helpers.Redis
 
                 if(data != null)
                 {
-                    result = true;
+                    return true;
                 }
             }
-            catch(Exception)
+            catch (NullKeyException)
             {
-                if(throwException)
+                throw;
+            }
+            catch (Exception)
+            {
+                if (throwException)
                     throw;
             }
 
-            return result;
+            return false;
         }
 
         public async Task<bool> ExistsAsync(string key)
@@ -187,7 +187,7 @@ namespace GranSteL.Helpers.Redis
         {
             if (string.IsNullOrEmpty(key))
             {
-                throw new ArgumentNullException(nameof(key), "The key should be specified");
+                throw new NullKeyException(nameof(key), "The key should be specified");
             }
         }
     }

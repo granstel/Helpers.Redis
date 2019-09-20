@@ -43,13 +43,13 @@ namespace GranSteL.Helpers.Redis.Tests
         [Test]
         public void AddAsync_NullKey_Throws()
         {
-            Assert.ThrowsAsync<ArgumentNullException>(async () => await _target.AddAsync(null, null));
+            Assert.ThrowsAsync<NullKeyException>(async () => await _target.AddAsync(null, null));
         }
 
         [Test]
         public void Add_NullKey_Throws()
         {
-            Assert.Throws<ArgumentNullException>(() => _target.Add(null, null));
+            Assert.Throws<NullKeyException>(() => _target.Add(null, null));
         }
 
         [Test]
@@ -275,6 +275,19 @@ namespace GranSteL.Helpers.Redis.Tests
         }
 
         [Test]
+        public void TryAddAsync_NullKey_Throws()
+        {
+            var data = _fixture.Create<object>();
+            var timeOut = _fixture.Create<TimeSpan>();
+
+
+            Assert.ThrowsAsync<NullKeyException>(() => _target.TryAddAsync(null, data, timeOut));
+
+
+            _mockRepository.VerifyAll();
+        }
+
+        [Test]
         public void TryAddAsync_Exception_Throws()
         {
             var key = _fixture.Create<string>();
@@ -337,13 +350,13 @@ namespace GranSteL.Helpers.Redis.Tests
         [Test]
         public void GetAsync_NullKey_Throws()
         {
-            Assert.ThrowsAsync<ArgumentNullException>(() => _target.GetAsync<object>(null));
+            Assert.ThrowsAsync<NullKeyException>(() => _target.GetAsync<object>(null));
         }
 
         [Test]
         public void Get_NullKey_Throws()
         {
-            Assert.Throws<ArgumentNullException>(() => _target.Get<object>(null));
+            Assert.Throws<NullKeyException>(() => _target.Get<object>(null));
         }
 
         [Test]
@@ -463,7 +476,7 @@ namespace GranSteL.Helpers.Redis.Tests
         [TestCase(false)]
         public void TryGet_NullKey_Throws(bool throwException)
         {
-            Assert.Throws<ArgumentNullException>(() => _target.TryGet(null, out object _, throwException));
+            Assert.Throws<NullKeyException>(() => _target.TryGet(null, out object _, throwException));
         }
 
         [Test]
@@ -575,13 +588,13 @@ namespace GranSteL.Helpers.Redis.Tests
         [Test]
         public void ExistsAsync_NullKey_Throws()
         {
-            Assert.ThrowsAsync<ArgumentNullException>(() => _target.ExistsAsync(null));
+            Assert.ThrowsAsync<NullKeyException>(() => _target.ExistsAsync(null));
         }
 
         [Test]
         public void Exists_NullKey_Throws()
         {
-            Assert.Throws<ArgumentNullException>(() => _target.Exists(null));
+            Assert.Throws<NullKeyException>(() => _target.Exists(null));
         }
 
         [Test]
@@ -655,7 +668,7 @@ namespace GranSteL.Helpers.Redis.Tests
         [Test]
         public void DeleteAsync_NullKey_Throws()
         {
-            Assert.ThrowsAsync<ArgumentNullException>(async () => await _target.DeleteAsync(null));
+            Assert.ThrowsAsync<NullKeyException>(async () => await _target.DeleteAsync(null));
         }
 
         [Test]
