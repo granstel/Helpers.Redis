@@ -36,7 +36,7 @@ namespace GranSteL.Helpers.Redis
 
             var value = data.Serialize(_serializerSettings);
 
-            key = $"{_keyPrefix}{key}";
+            key = GetFullKey(key);
 
             return await _dataBase.StringSetAsync(key, value, timeOut).ConfigureAwait(false);
         }
@@ -68,7 +68,7 @@ namespace GranSteL.Helpers.Redis
 
             var value = data.Serialize(_serializerSettings);
 
-            key = $"{_keyPrefix}{key}";
+            key = GetFullKey(key);
 
             return _dataBase.StringSet(key, value, timeOut);
         }
@@ -98,7 +98,7 @@ namespace GranSteL.Helpers.Redis
 
             var data = default(T);
 
-            key = $"{_keyPrefix}{key}";
+            key = GetFullKey(key);
 
             var value = await _dataBase.StringGetAsync(key);
 
@@ -118,7 +118,7 @@ namespace GranSteL.Helpers.Redis
 
             var data = default(T);
 
-            key = $"{_keyPrefix}{key}";
+            key = GetFullKey(key);
 
             var value = _dataBase.StringGet(key).ToString();
 
@@ -138,7 +138,7 @@ namespace GranSteL.Helpers.Redis
             {
                 ValidateKey(key);
 
-                key = $"{_keyPrefix}{key}";
+                key = GetFullKey(key);
 
                 var value = _dataBase.StringGet(key).ToString();
 
@@ -168,7 +168,7 @@ namespace GranSteL.Helpers.Redis
         {
             ValidateKey(key);
 
-            key = $"{_keyPrefix}{key}";
+            key = GetFullKey(key);
 
             return await _dataBase.KeyExistsAsync(key).ConfigureAwait(false);
         }
@@ -177,7 +177,7 @@ namespace GranSteL.Helpers.Redis
         {
             ValidateKey(key);
 
-            key = $"{_keyPrefix}{key}";
+            key = GetFullKey(key);
 
             return _dataBase.KeyExists(key);
         }
@@ -186,7 +186,7 @@ namespace GranSteL.Helpers.Redis
         {
             ValidateKey(key);
 
-            key = $"{_keyPrefix}{key}";
+            key = GetFullKey(key);
 
             return await _dataBase.KeyDeleteAsync(key).ConfigureAwait(false);
         }
@@ -197,6 +197,11 @@ namespace GranSteL.Helpers.Redis
             {
                 throw new NullKeyException(nameof(key), "The key should be specified");
             }
+        }
+
+        private string GetFullKey(string key)
+        {
+            return $"{_keyPrefix}{key}";
         }
     }
 }
