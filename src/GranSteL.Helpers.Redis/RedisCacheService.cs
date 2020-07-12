@@ -136,12 +136,20 @@ namespace GranSteL.Helpers.Redis
 
             try
             {
-                data = Get<T>(key);
+                ValidateKey(key);
 
-                if(data != null)
+                key = $"{_keyPrefix}{key}";
+
+                var value = _dataBase.StringGet(key).ToString();
+
+                if (!string.IsNullOrEmpty(value))
                 {
+                    data = value.Deserialize<T>(_serializerSettings);
+
                     return true;
                 }
+
+                return false;
             }
             catch (NullKeyException)
             {
