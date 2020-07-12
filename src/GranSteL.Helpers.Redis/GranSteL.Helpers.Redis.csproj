@@ -18,8 +18,9 @@ Simple wrapper on StackExchange.Redis, that can help you to create, read, check 
     <IncludeSymbols>true</IncludeSymbols>
     <AssemblyVersion>1.0.0.0</AssemblyVersion>
     <FileVersion>1.0.0.0</FileVersion>
-    <PackageReleaseNotes>If key isn't specified then throws NullKeyException</PackageReleaseNotes>
-    <Version>1.0.8</Version>
+    <PackageReleaseNotes>4611545 fix the issue when TryGet returns "true" even there is no any value at key
+5098fea reuse full key pattern from common method</PackageReleaseNotes>
+    <Version>1.0.9</Version>
   </PropertyGroup>
 
   <ItemGroup>
