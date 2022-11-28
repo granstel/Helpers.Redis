@@ -1,10 +1,12 @@
-﻿using Newtonsoft.Json;
+﻿using System.Runtime.CompilerServices;
+using Newtonsoft.Json;
 
+[assembly: InternalsVisibleTo("GranSteL.Helpers.Redis.Tests")]
 namespace GranSteL.Helpers.Redis.Extensions
 {
-    public static class SerializationExtensions
+    internal static class SerializationExtensions
     {
-        public static string Serialize(this object obj, JsonSerializerSettings settings = null)
+        internal static string Serialize(this object obj, JsonSerializerSettings settings = null)
         {
             if (!(obj is string result))
             {
@@ -14,7 +16,7 @@ namespace GranSteL.Helpers.Redis.Extensions
             return result;
         }
 
-        public static T Deserialize<T>(this object obj, JsonSerializerSettings settings = null)
+        internal static T Deserialize<T>(this object obj, JsonSerializerSettings settings = null)
         {
             switch (obj)
             {
