@@ -85,7 +85,8 @@ namespace GranSteL.Helpers.Redis.Tests
             var value = _fixture.Create<string>();
             var timeOut = _fixture.Create<TimeSpan>();
 
-            _dataBase.Setup(b => b.StringSetAsync(key, value, timeOut, When.Always, CommandFlags.None))
+            _dataBase.Setup(b => b.StringSetAsync(key, value, timeOut, 
+                    It.IsAny<bool>(), It.IsAny<When>(), It.IsAny<CommandFlags>()))
                 .ReturnsAsync(() => expected);
 
 
@@ -106,7 +107,8 @@ namespace GranSteL.Helpers.Redis.Tests
             var value = _fixture.Create<string>();
             var timeOut = _fixture.Create<TimeSpan>();
 
-            _dataBase.Setup(b => b.StringSet(key, value, timeOut, When.Always, CommandFlags.None))
+            _dataBase.Setup(b => b.StringSet(key, value, timeOut, 
+                    It.IsAny<bool>(), It.IsAny<When>(), It.IsAny<CommandFlags>()))
                 .Returns(() => expected);
 
 
@@ -129,7 +131,8 @@ namespace GranSteL.Helpers.Redis.Tests
 
             var value = data.Serialize(_serializerSettings);
 
-            _dataBase.Setup(b => b.StringSetAsync(key, value, timeOut, When.Always, CommandFlags.None))
+            _dataBase.Setup(b => b.StringSetAsync(key, value, timeOut, 
+                    It.IsAny<bool>(), It.IsAny<When>(), It.IsAny<CommandFlags>()))
                 .ReturnsAsync(() => expected);
 
 
@@ -153,7 +156,8 @@ namespace GranSteL.Helpers.Redis.Tests
 
             var value = data.Serialize(_serializerSettings);
 
-            _dataBase.Setup(b => b.StringSet(key, value, timeOut, When.Always, CommandFlags.None))
+            _dataBase.Setup(b => b.StringSet(key, value, timeOut, 
+                    It.IsAny<bool>(), It.IsAny<When>(), It.IsAny<CommandFlags>()))
                 .Returns(() => expected);
 
 
@@ -175,7 +179,8 @@ namespace GranSteL.Helpers.Redis.Tests
 
             var value = data.Serialize(_serializerSettings);
 
-            _dataBase.Setup(b => b.StringSetAsync(key, value, timeOut, When.Always, CommandFlags.None))
+            _dataBase.Setup(b => b.StringSetAsync(key, value, timeOut, 
+                    It.IsAny<bool>(), It.IsAny<When>(), It.IsAny<CommandFlags>()))
                 .Throws<Exception>();
 
 
