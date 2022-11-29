@@ -194,7 +194,8 @@ namespace GranSteL.Helpers.Redis.Tests
 
             var value = data.Serialize(_serializerSettings);
 
-            _dataBase.Setup(b => b.StringSet(key, value, timeOut, When.Always, CommandFlags.None))
+            _dataBase.Setup(b => b.StringSet(key, value, timeOut, 
+                    It.IsAny<bool>(), It.IsAny<When>(), It.IsAny<CommandFlags>()))
                 .Throws<Exception>();
 
 
