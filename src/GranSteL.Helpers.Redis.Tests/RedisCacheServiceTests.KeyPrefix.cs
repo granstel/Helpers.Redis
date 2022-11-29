@@ -57,7 +57,8 @@ namespace GranSteL.Helpers.Redis.Tests
 
             var expectedKey = $"{_keyPrefix}{key}";
 
-            _dataBase.Setup(b => b.StringSetAsync(expectedKey, value, timeOut, When.Always, CommandFlags.None))
+            _dataBase.Setup(b => b.StringSetAsync(expectedKey, value, timeOut, 
+                    It.IsAny<bool>(), It.IsAny<When>(), It.IsAny<CommandFlags>()))
                 .ReturnsAsync(() => expected);
 
 
@@ -83,7 +84,8 @@ namespace GranSteL.Helpers.Redis.Tests
 
             var expectedKey = $"{_keyPrefix}{key}";
 
-            _dataBase.Setup(b => b.StringSetAsync(expectedKey, value, timeOut, When.Always, CommandFlags.None))
+            _dataBase.Setup(b => b.StringSetAsync(expectedKey, value, timeOut, 
+                    It.IsAny<bool>(), It.IsAny<When>(), It.IsAny<CommandFlags>()))
                 .ReturnsAsync(() => expected);
 
 
@@ -108,7 +110,8 @@ namespace GranSteL.Helpers.Redis.Tests
 
             var expectedKey = $"{_keyPrefix}{key}";
 
-            _dataBase.Setup(b => b.StringSet(expectedKey, value, timeOut, When.Always, CommandFlags.None))
+            _dataBase.Setup(b => b.StringSet(expectedKey, value, timeOut, 
+                    It.IsAny<bool>(), It.IsAny<When>(), It.IsAny<CommandFlags>()))
                 .Returns(() => expected);
 
 
@@ -133,7 +136,8 @@ namespace GranSteL.Helpers.Redis.Tests
 
             var expectedKey = $"{_keyPrefix}{key}";
 
-            _dataBase.Setup(b => b.StringSet(expectedKey, value, timeOut, When.Always, CommandFlags.None))
+            _dataBase.Setup(b => b.StringSet(expectedKey, value, timeOut, 
+                    It.IsAny<bool>(), It.IsAny<When>(), It.IsAny<CommandFlags>()))
                 .Returns(() => expected);
 
 
