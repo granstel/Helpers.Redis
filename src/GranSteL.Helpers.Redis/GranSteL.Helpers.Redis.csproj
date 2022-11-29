@@ -2,12 +2,15 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
+    <OutputType>Library</OutputType>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    
     <Title>Redis helpers</Title>
-    <Description>RedisCacheService: simple wrapper on StackExchange.Redis, that can help you to create, read, check existing, and delete data at JSON format with own serialization (based on Newtonsoft.Json).
+    <Description>
+      RedisCacheService: simple wrapper on StackExchange.Redis, that can help you to create, read, check existing, 
+      and delete data at JSON format with own serialization (based on Newtonsoft.Json).
     </Description>
-    <Version>1.1.0</Version>
-    <PackageReleaseNotes>StackExchange.Redis updated to Version="2.6.70"</PackageReleaseNotes>
+
     <Authors>GranSteL</Authors>
     <PackageProjectUrl>https://github.com/granstel/Helpers.Redis</PackageProjectUrl>
     <RepositoryUrl>https://github.com/granstel/Helpers.Redis</RepositoryUrl>
@@ -16,6 +19,9 @@
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
     <Language>C#</Language>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+
+    <Version>1.1.0</Version>
+    <PackageReleaseNotes>Internal SerializationExtensions, upgraded packages</PackageReleaseNotes>
   </PropertyGroup>
 
   <ItemGroup>
