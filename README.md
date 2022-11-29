@@ -1,5 +1,4 @@
 # Helpers.Redis
-[![Build status](https://ci.appveyor.com/api/projects/status/scnpxtc7itofgyy2?svg=true)](https://ci.appveyor.com/project/granstel/helpers-redis)
 [![NuGet](https://buildstats.info/nuget/GranSteL.Helpers.Redis)](https://www.nuget.org/packages/GranSteL.Helpers.Redis)
 
 RedisCacheService:

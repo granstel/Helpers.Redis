@@ -85,7 +85,8 @@ namespace GranSteL.Helpers.Redis.Tests
             var value = _fixture.Create<string>();
             var timeOut = _fixture.Create<TimeSpan>();
 
-            _dataBase.Setup(b => b.StringSetAsync(key, value, timeOut, When.Always, CommandFlags.None))
+            _dataBase.Setup(b => b.StringSetAsync(key, value, timeOut, 
+                    It.IsAny<bool>(), It.IsAny<When>(), It.IsAny<CommandFlags>()))
                 .ReturnsAsync(() => expected);
 
 
@@ -106,7 +107,8 @@ namespace GranSteL.Helpers.Redis.Tests
             var value = _fixture.Create<string>();
             var timeOut = _fixture.Create<TimeSpan>();
 
-            _dataBase.Setup(b => b.StringSet(key, value, timeOut, When.Always, CommandFlags.None))
+            _dataBase.Setup(b => b.StringSet(key, value, timeOut, 
+                    It.IsAny<bool>(), It.IsAny<When>(), It.IsAny<CommandFlags>()))
                 .Returns(() => expected);
 
 
@@ -129,7 +131,8 @@ namespace GranSteL.Helpers.Redis.Tests
 
             var value = data.Serialize(_serializerSettings);
 
-            _dataBase.Setup(b => b.StringSetAsync(key, value, timeOut, When.Always, CommandFlags.None))
+            _dataBase.Setup(b => b.StringSetAsync(key, value, timeOut, 
+                    It.IsAny<bool>(), It.IsAny<When>(), It.IsAny<CommandFlags>()))
                 .ReturnsAsync(() => expected);
 
 
@@ -153,7 +156,8 @@ namespace GranSteL.Helpers.Redis.Tests
 
             var value = data.Serialize(_serializerSettings);
 
-            _dataBase.Setup(b => b.StringSet(key, value, timeOut, When.Always, CommandFlags.None))
+            _dataBase.Setup(b => b.StringSet(key, value, timeOut, 
+                    It.IsAny<bool>(), It.IsAny<When>(), It.IsAny<CommandFlags>()))
                 .Returns(() => expected);
 
 
@@ -175,7 +179,8 @@ namespace GranSteL.Helpers.Redis.Tests
 
             var value = data.Serialize(_serializerSettings);
 
-            _dataBase.Setup(b => b.StringSetAsync(key, value, timeOut, When.Always, CommandFlags.None))
+            _dataBase.Setup(b => b.StringSetAsync(key, value, timeOut, 
+                    It.IsAny<bool>(), It.IsAny<When>(), It.IsAny<CommandFlags>()))
                 .Throws<Exception>();
 
 
@@ -194,7 +199,8 @@ namespace GranSteL.Helpers.Redis.Tests
 
             var value = data.Serialize(_serializerSettings);
 
-            _dataBase.Setup(b => b.StringSet(key, value, timeOut, When.Always, CommandFlags.None))
+            _dataBase.Setup(b => b.StringSet(key, value, timeOut, 
+                    It.IsAny<bool>(), It.IsAny<When>(), It.IsAny<CommandFlags>()))
                 .Throws<Exception>();
 
 
@@ -219,7 +225,8 @@ namespace GranSteL.Helpers.Redis.Tests
 
             var value = data.Serialize(_serializerSettings);
 
-            _dataBase.Setup(b => b.StringSetAsync(key, value, timeOut, When.Always, CommandFlags.None))
+            _dataBase.Setup(b => b.StringSetAsync(key, value, timeOut, 
+                    It.IsAny<bool>(), It.IsAny<When>(), It.IsAny<CommandFlags>()))
                 .ReturnsAsync(() => expected);
 
 
@@ -242,7 +249,8 @@ namespace GranSteL.Helpers.Redis.Tests
 
             var value = data.Serialize(_serializerSettings);
 
-            _dataBase.Setup(b => b.StringSet(key, value, timeOut, When.Always, CommandFlags.None))
+            _dataBase.Setup(b => b.StringSet(key, value, timeOut, 
+                    It.IsAny<bool>(), It.IsAny<When>(), It.IsAny<CommandFlags>()))
                 .Returns(() => expected);
 
 
@@ -263,7 +271,8 @@ namespace GranSteL.Helpers.Redis.Tests
 
             var value = data.Serialize(_serializerSettings);
 
-            _dataBase.Setup(b => b.StringSetAsync(key, value, timeOut, When.Always, CommandFlags.None)).Throws<Exception>();
+            _dataBase.Setup(b => b.StringSetAsync(key, value, timeOut, 
+                It.IsAny<bool>(), It.IsAny<When>(), It.IsAny<CommandFlags>())).Throws<Exception>();
 
 
             var result = await _target.TryAddAsync(key, data, timeOut);
@@ -296,7 +305,8 @@ namespace GranSteL.Helpers.Redis.Tests
 
             var value = data.Serialize(_serializerSettings);
 
-            _dataBase.Setup(b => b.StringSetAsync(key, value, timeOut, When.Always, CommandFlags.None)).Throws<Exception>();
+            _dataBase.Setup(b => b.StringSetAsync(key, value, timeOut, 
+                It.IsAny<bool>(), It.IsAny<When>(), It.IsAny<CommandFlags>())).Throws<Exception>();
 
 
             Assert.ThrowsAsync<Exception>(() => _target.TryAddAsync(key, data, timeOut, true));
@@ -314,7 +324,8 @@ namespace GranSteL.Helpers.Redis.Tests
 
             var value = data.Serialize(_serializerSettings);
 
-            _dataBase.Setup(b => b.StringSet(key, value, timeOut, When.Always, CommandFlags.None)).Throws<Exception>();
+            _dataBase.Setup(b => b.StringSet(key, value, timeOut, 
+                It.IsAny<bool>(), It.IsAny<When>(), It.IsAny<CommandFlags>())).Throws<Exception>();
 
 
             var result = _target.TryAdd(key, data, timeOut);
@@ -334,7 +345,8 @@ namespace GranSteL.Helpers.Redis.Tests
 
             var value = data.Serialize(_serializerSettings);
 
-            _dataBase.Setup(b => b.StringSet(key, value, timeOut, When.Always, CommandFlags.None)).Throws<Exception>();
+            _dataBase.Setup(b => b.StringSet(key, value, timeOut, 
+                It.IsAny<bool>(), It.IsAny<When>(), It.IsAny<CommandFlags>())).Throws<Exception>();
 
 
             Assert.Throws<Exception>(() => _target.TryAdd(key, data, timeOut, true));

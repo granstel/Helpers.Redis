@@ -11,20 +11,20 @@ namespace GranSteL.Helpers.Redis
         private readonly IDatabase _dataBase;
         private readonly string _keyPrefix;
 
-        private readonly JsonSerializerSettings _serializerSettings = new JsonSerializerSettings
+        private readonly JsonSerializerSettings _defaultSerializerSettings = new JsonSerializerSettings
         {
             NullValueHandling = NullValueHandling.Ignore,
             TypeNameHandling = TypeNameHandling.Auto
         };
 
-        public RedisCacheService(IDatabase dataBase, string keyPrefix = null, JsonSerializerSettings serializerSettings = null)
+        public RedisCacheService(IDatabase dataBase, string keyPrefix = null, JsonSerializerSettings defaultSerializerSettings = null)
         {
             _dataBase = dataBase;
             _keyPrefix = keyPrefix;
 
-            if (serializerSettings != null)
+            if (defaultSerializerSettings != null)
             {
-                _serializerSettings = serializerSettings;
+                _defaultSerializerSettings = defaultSerializerSettings;
             }
         }
 
@@ -34,7 +34,7 @@ namespace GranSteL.Helpers.Redis
 
             if (data == null) return false;
 
-            var value = data.Serialize(_serializerSettings);
+            var value = data.Serialize(_defaultSerializerSettings);
 
             key = GetFullKey(key);
 
@@ -66,7 +66,7 @@ namespace GranSteL.Helpers.Redis
 
             if (data == null) return false;
 
-            var value = data.Serialize(_serializerSettings);
+            var value = data.Serialize(_defaultSerializerSettings);
 
             key = GetFullKey(key);
 
@@ -106,7 +106,7 @@ namespace GranSteL.Helpers.Redis
 
             if (!string.IsNullOrEmpty(stringValue))
             {
-                data = stringValue.Deserialize<T>(_serializerSettings);
+                data = stringValue.Deserialize<T>(_defaultSerializerSettings);
             }
 
             return data;
@@ -124,7 +124,7 @@ namespace GranSteL.Helpers.Redis
 
             if (!string.IsNullOrEmpty(value))
             {
-                data = value.Deserialize<T>(_serializerSettings);
+                data = value.Deserialize<T>(_defaultSerializerSettings);
             }
 
             return data;
@@ -144,7 +144,7 @@ namespace GranSteL.Helpers.Redis
 
                 if (!string.IsNullOrEmpty(value))
                 {
-                    data = value.Deserialize<T>(_serializerSettings);
+                    data = value.Deserialize<T>(_defaultSerializerSettings);
 
                     return true;
                 }
