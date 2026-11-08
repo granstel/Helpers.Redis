@@ -17,4 +17,12 @@ PM> `Install-Package GranSteL.Helpers.Redis`
 
 ### Tests
 
-`dotnet test src/GranSteL.Helpers.sln` runs the unit tests with the .NET 10 SDK. Set `HELPERS_REDIS_TEST_PORT` to the port of a disposable Redis instance on loopback to also run the integration tests.
+`dotnet test` runs the unit tests with the SDK pinned in `global.json`. Set `HELPERS_REDIS_TEST_PORT` to the port of a disposable Redis instance on loopback to also run the integration tests.
+
+### Publishing
+
+Publish a GitHub Release with a tag such as `2.1.0`, `v2.1.0`, or `2.1.0-rc.1`. NuGet ignores SemVer build metadata, so tags with a `+` suffix are rejected. The workflow builds and tests the tagged commit, packs the library project once, attaches the package to the release, and pushes it to both registries.
+
+For NuGet.org, set the GitHub environment secret `NUGET_USER` to the profile name of a package owner. Configure [Trusted Publishing](https://learn.microsoft.com/nuget/nuget-org/trusted-publishing) with owner `granstel`, repository `Helpers.Redis`, workflow file `release.yml`, and environment `nuget`. Allow publishing new versions of `GranSteL.Helpers.Redis`.
+
+If the package already exists in GitHub Packages, grant this repository Write access under the package's **Manage Actions access** settings. Keep the GitHub Release editable so the workflow can attach its asset after publication. If publication fails, rerun failed jobs to reuse the original package.

@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using AutoFixture;
 using Moq;
 using NUnit.Framework;
+using NUnit.Framework.Legacy;
 using StackExchange.Redis;
 
 namespace GranSteL.Helpers.Redis.Tests
@@ -33,9 +34,9 @@ namespace GranSteL.Helpers.Redis.Tests
         #region Add
 
         [Test]
-        public void AddAsync_NullKey_Throws()
+        public async Task AddAsync_NullKey_Throws()
         {
-            Assert.ThrowsAsync<NullKeyException>(async () => await _target.AddAsync(null, null));
+            await Assert.ThrowsAsync<NullKeyException>(() => _target.AddAsync(null, null));
         }
 
         [Test]
@@ -53,7 +54,7 @@ namespace GranSteL.Helpers.Redis.Tests
             var result = await _target.AddAsync(key, null);
 
 
-            Assert.False(result);
+            ClassicAssert.False(result);
         }
 
         [Test]
@@ -65,7 +66,7 @@ namespace GranSteL.Helpers.Redis.Tests
             var result = _target.Add(key, null);
 
 
-            Assert.False(result);
+            ClassicAssert.False(result);
         }
 
         [Test]
@@ -87,7 +88,7 @@ namespace GranSteL.Helpers.Redis.Tests
 
             _mockRepository.VerifyAll();
 
-            Assert.AreEqual(expected, result);
+            ClassicAssert.AreEqual(expected, result);
         }
 
         [Test]
@@ -109,7 +110,7 @@ namespace GranSteL.Helpers.Redis.Tests
 
             _mockRepository.VerifyAll();
 
-            Assert.AreEqual(expected, result);
+            ClassicAssert.AreEqual(expected, result);
         }
 
         [Test]
@@ -133,7 +134,7 @@ namespace GranSteL.Helpers.Redis.Tests
 
             _mockRepository.VerifyAll();
 
-            Assert.AreEqual(expected, result);
+            ClassicAssert.AreEqual(expected, result);
 
         }
 
@@ -158,12 +159,12 @@ namespace GranSteL.Helpers.Redis.Tests
 
             _mockRepository.VerifyAll();
 
-            Assert.AreEqual(expected, result);
+            ClassicAssert.AreEqual(expected, result);
 
         }
 
         [Test]
-        public void AddAsync_Exception_Throws()
+        public async Task AddAsync_Exception_Throws()
         {
             var key = _fixture.Create<string>();
             var data = new object();
@@ -176,7 +177,7 @@ namespace GranSteL.Helpers.Redis.Tests
                 .Throws<Exception>();
 
 
-            Assert.ThrowsAsync<Exception>(() => _target.AddAsync(key, data, timeOut));
+            await Assert.ThrowsAsync<Exception>(() => _target.AddAsync(key, data, timeOut));
 
 
             _mockRepository.VerifyAll();
@@ -227,7 +228,7 @@ namespace GranSteL.Helpers.Redis.Tests
 
             _mockRepository.VerifyAll();
 
-            Assert.AreEqual(expected, result);
+            ClassicAssert.AreEqual(expected, result);
         }
 
         [Test]
@@ -251,7 +252,7 @@ namespace GranSteL.Helpers.Redis.Tests
 
             _mockRepository.VerifyAll();
 
-            Assert.AreEqual(expected, result);
+            ClassicAssert.AreEqual(expected, result);
         }
 
         [Test]
@@ -272,24 +273,24 @@ namespace GranSteL.Helpers.Redis.Tests
 
             _mockRepository.VerifyAll();
 
-            Assert.False(result);
+            ClassicAssert.False(result);
         }
 
         [Test]
-        public void TryAddAsync_NullKey_Throws()
+        public async Task TryAddAsync_NullKey_Throws()
         {
             var data = new object();
             var timeOut = _fixture.Create<TimeSpan>();
 
 
-            Assert.ThrowsAsync<NullKeyException>(() => _target.TryAddAsync(null, data, timeOut));
+            await Assert.ThrowsAsync<NullKeyException>(() => _target.TryAddAsync(null, data, timeOut));
 
 
             _mockRepository.VerifyAll();
         }
 
         [Test]
-        public void TryAddAsync_Exception_Throws()
+        public async Task TryAddAsync_Exception_Throws()
         {
             var key = _fixture.Create<string>();
             var data = new object();
@@ -301,7 +302,7 @@ namespace GranSteL.Helpers.Redis.Tests
                 It.IsAny<bool>(), It.IsAny<When>(), It.IsAny<CommandFlags>())).Throws<Exception>();
 
 
-            Assert.ThrowsAsync<Exception>(() => _target.TryAddAsync(key, data, timeOut, true));
+            await Assert.ThrowsAsync<Exception>(() => _target.TryAddAsync(key, data, timeOut, true));
 
 
             _mockRepository.VerifyAll();
@@ -325,7 +326,7 @@ namespace GranSteL.Helpers.Redis.Tests
 
             _mockRepository.VerifyAll();
 
-            Assert.False(result);
+            ClassicAssert.False(result);
         }
 
         [Test]
@@ -352,9 +353,9 @@ namespace GranSteL.Helpers.Redis.Tests
         #region Get
 
         [Test]
-        public void GetAsync_NullKey_Throws()
+        public async Task GetAsync_NullKey_Throws()
         {
-            Assert.ThrowsAsync<NullKeyException>(() => _target.GetAsync<object>(null));
+            await Assert.ThrowsAsync<NullKeyException>(() => _target.GetAsync<object>(null));
         }
 
         [Test]
@@ -378,7 +379,7 @@ namespace GranSteL.Helpers.Redis.Tests
 
             _mockRepository.VerifyAll();
 
-            Assert.AreEqual(value, data);
+            ClassicAssert.AreEqual(value, data);
         }
 
         [Test]
@@ -396,7 +397,7 @@ namespace GranSteL.Helpers.Redis.Tests
 
             _mockRepository.VerifyAll();
 
-            Assert.AreEqual(value, data);
+            ClassicAssert.AreEqual(value, data);
         }
 
         [Test]
@@ -416,9 +417,9 @@ namespace GranSteL.Helpers.Redis.Tests
 
             _mockRepository.VerifyAll();
 
-            Assert.NotNull(data);
-            Assert.AreEqual(expected.Property, data.Property);
-            Assert.AreEqual(expected.Field, data.Field);
+            ClassicAssert.NotNull(data);
+            ClassicAssert.AreEqual(expected.Property, data.Property);
+            ClassicAssert.AreEqual(expected.Field, data.Field);
         }
 
         [Test]
@@ -438,20 +439,20 @@ namespace GranSteL.Helpers.Redis.Tests
 
             _mockRepository.VerifyAll();
 
-            Assert.NotNull(data);
-            Assert.AreEqual(expected.Property, data.Property);
-            Assert.AreEqual(expected.Field, data.Field);
+            ClassicAssert.NotNull(data);
+            ClassicAssert.AreEqual(expected.Property, data.Property);
+            ClassicAssert.AreEqual(expected.Field, data.Field);
         }
 
         [Test]
-        public void GetAsync_ThrowException_Throws()
+        public async Task GetAsync_ThrowException_Throws()
         {
             var key = _fixture.Create<string>();
 
             _dataBase.Setup(b => b.StringGetAsync(key, CommandFlags.None)).Throws<Exception>();
 
 
-            Assert.ThrowsAsync<Exception>(() => _target.GetAsync<object>(key));
+            await Assert.ThrowsAsync<Exception>(() => _target.GetAsync<object>(key));
 
 
             _mockRepository.VerifyAll();
@@ -500,8 +501,8 @@ namespace GranSteL.Helpers.Redis.Tests
 
             _mockRepository.VerifyAll();
 
-            Assert.False(result);
-            Assert.IsNull(data);
+            ClassicAssert.False(result);
+            ClassicAssert.IsNull(data);
         }
 
         [Test]
@@ -521,8 +522,8 @@ namespace GranSteL.Helpers.Redis.Tests
 
             _mockRepository.VerifyAll();
 
-            Assert.True(result);
-            Assert.AreEqual(value, data);
+            ClassicAssert.True(result);
+            ClassicAssert.AreEqual(value, data);
         }
 
         [Test]
@@ -544,10 +545,10 @@ namespace GranSteL.Helpers.Redis.Tests
 
             _mockRepository.VerifyAll();
 
-            Assert.True(result);
-            Assert.NotNull(data);
-            Assert.AreEqual(expected.Property, data.Property);
-            Assert.AreEqual(expected.Field, data.Field);
+            ClassicAssert.True(result);
+            ClassicAssert.NotNull(data);
+            ClassicAssert.AreEqual(expected.Property, data.Property);
+            ClassicAssert.AreEqual(expected.Field, data.Field);
         }
 
         [Test]
@@ -565,7 +566,7 @@ namespace GranSteL.Helpers.Redis.Tests
 
             _mockRepository.VerifyAll();
 
-            Assert.IsNull(data);
+            ClassicAssert.IsNull(data);
         }
 
         [Test]
@@ -581,8 +582,8 @@ namespace GranSteL.Helpers.Redis.Tests
 
             _mockRepository.VerifyAll();
 
-            Assert.False(result);
-            Assert.IsNull(data);
+            ClassicAssert.False(result);
+            ClassicAssert.IsNull(data);
         }
 
         #endregion TryGet
@@ -590,9 +591,9 @@ namespace GranSteL.Helpers.Redis.Tests
         #region Exists
 
         [Test]
-        public void ExistsAsync_NullKey_Throws()
+        public async Task ExistsAsync_NullKey_Throws()
         {
-            Assert.ThrowsAsync<NullKeyException>(() => _target.ExistsAsync(null));
+            await Assert.ThrowsAsync<NullKeyException>(() => _target.ExistsAsync(null));
         }
 
         [Test]
@@ -616,7 +617,7 @@ namespace GranSteL.Helpers.Redis.Tests
 
             _mockRepository.VerifyAll();
 
-            Assert.AreEqual(expected, result);
+            ClassicAssert.AreEqual(expected, result);
         }
 
         [Test]
@@ -634,18 +635,18 @@ namespace GranSteL.Helpers.Redis.Tests
 
             _mockRepository.VerifyAll();
 
-            Assert.AreEqual(expected, result);
+            ClassicAssert.AreEqual(expected, result);
         }
 
         [Test]
-        public void ExistsAsync_Throws_Success()
+        public async Task ExistsAsync_Throws_Success()
         {
             var key = _fixture.Create<string>();
 
             _dataBase.Setup(b => b.KeyExistsAsync(key, CommandFlags.None)).Throws<Exception>();
 
 
-            Assert.ThrowsAsync<Exception>(() => _target.ExistsAsync(key));
+            await Assert.ThrowsAsync<Exception>(() => _target.ExistsAsync(key));
 
 
             _mockRepository.VerifyAll();
@@ -670,9 +671,9 @@ namespace GranSteL.Helpers.Redis.Tests
         #region DeleteAsync
 
         [Test]
-        public void DeleteAsync_NullKey_Throws()
+        public async Task DeleteAsync_NullKey_Throws()
         {
-            Assert.ThrowsAsync<NullKeyException>(async () => await _target.DeleteAsync(null));
+            await Assert.ThrowsAsync<NullKeyException>(() => _target.DeleteAsync(null));
         }
 
         [Test]
@@ -690,18 +691,18 @@ namespace GranSteL.Helpers.Redis.Tests
 
             _mockRepository.VerifyAll();
 
-            Assert.AreEqual(expected, result);
+            ClassicAssert.AreEqual(expected, result);
         }
 
         [Test]
-        public void DeleteAsync_Throws_Success()
+        public async Task DeleteAsync_Throws_Success()
         {
             var key = _fixture.Create<string>();
 
             _dataBase.Setup(b => b.KeyDeleteAsync(key, CommandFlags.None)).Throws<Exception>();
 
 
-            Assert.ThrowsAsync<Exception>(() => _target.DeleteAsync(key));
+            await Assert.ThrowsAsync<Exception>(() => _target.DeleteAsync(key));
 
 
             _mockRepository.VerifyAll();

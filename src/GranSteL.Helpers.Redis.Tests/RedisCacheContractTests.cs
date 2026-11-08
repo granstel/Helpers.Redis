@@ -104,7 +104,7 @@ namespace GranSteL.Helpers.Redis.Tests
             Assert.That(await _cache.TryAddAsync("missing", null), Is.False);
             Assert.That(await _cache.ExistsAsync("missing"), Is.False);
             Assert.Throws<NullKeyException>(() => _cache.TryAdd("", "x"));
-            Assert.ThrowsAsync<NullKeyException>(() => _cache.TryAddAsync("", "x"));
+            await Assert.ThrowsAsync<NullKeyException>(() => _cache.TryAddAsync("", "x"));
             Assert.Throws<NullKeyException>(() => _cache.TryGet<int>("", out _));
 
             await SeedAsync("broken", "{");
