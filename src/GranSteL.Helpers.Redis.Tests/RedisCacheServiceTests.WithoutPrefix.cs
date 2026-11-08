@@ -1,9 +1,7 @@
-﻿using System;
+using System;
 using System.Threading.Tasks;
 using AutoFixture;
-using GranSteL.Helpers.Redis.Extensions;
 using Moq;
-using Newtonsoft.Json;
 using NUnit.Framework;
 using StackExchange.Redis;
 
@@ -20,12 +18,6 @@ namespace GranSteL.Helpers.Redis.Tests
 
         private Fixture _fixture;
 
-        private readonly JsonSerializerSettings _serializerSettings = new JsonSerializerSettings
-        {
-            NullValueHandling = NullValueHandling.Ignore,
-            TypeNameHandling = TypeNameHandling.Auto
-        };
-
         [SetUp]
         public void InitTest()
         {
@@ -33,7 +25,7 @@ namespace GranSteL.Helpers.Redis.Tests
 
             _dataBase = _mockRepository.Create<IDatabase>();
 
-            _target = new RedisCacheService(_dataBase.Object, null, _serializerSettings);
+            _target = new RedisCacheService(_dataBase.Object, null);
 
             _fixture = new Fixture();
         }
@@ -126,10 +118,10 @@ namespace GranSteL.Helpers.Redis.Tests
         public async Task AddAsync_Object_Success(bool expected)
         {
             var key = _fixture.Create<string>();
-            var data = _fixture.Create<object>();
+            var data = new object();
             var timeOut = _fixture.Create<TimeSpan>();
 
-            var value = data.Serialize(_serializerSettings);
+            const string value = "{}";
 
             _dataBase.Setup(b => b.StringSetAsync(key, value, timeOut, 
                     It.IsAny<bool>(), It.IsAny<When>(), It.IsAny<CommandFlags>()))
@@ -151,10 +143,10 @@ namespace GranSteL.Helpers.Redis.Tests
         public void Add_Object_Success(bool expected)
         {
             var key = _fixture.Create<string>();
-            var data = _fixture.Create<object>();
+            var data = new object();
             var timeOut = _fixture.Create<TimeSpan>();
 
-            var value = data.Serialize(_serializerSettings);
+            const string value = "{}";
 
             _dataBase.Setup(b => b.StringSet(key, value, timeOut, 
                     It.IsAny<bool>(), It.IsAny<When>(), It.IsAny<CommandFlags>()))
@@ -174,10 +166,10 @@ namespace GranSteL.Helpers.Redis.Tests
         public void AddAsync_Exception_Throws()
         {
             var key = _fixture.Create<string>();
-            var data = _fixture.Create<object>();
+            var data = new object();
             var timeOut = _fixture.Create<TimeSpan>();
 
-            var value = data.Serialize(_serializerSettings);
+            const string value = "{}";
 
             _dataBase.Setup(b => b.StringSetAsync(key, value, timeOut, 
                     It.IsAny<bool>(), It.IsAny<When>(), It.IsAny<CommandFlags>()))
@@ -194,10 +186,10 @@ namespace GranSteL.Helpers.Redis.Tests
         public void Add_Exception_Throws()
         {
             var key = _fixture.Create<string>();
-            var data = _fixture.Create<object>();
+            var data = new object();
             var timeOut = _fixture.Create<TimeSpan>();
 
-            var value = data.Serialize(_serializerSettings);
+            const string value = "{}";
 
             _dataBase.Setup(b => b.StringSet(key, value, timeOut, 
                     It.IsAny<bool>(), It.IsAny<When>(), It.IsAny<CommandFlags>()))
@@ -220,10 +212,10 @@ namespace GranSteL.Helpers.Redis.Tests
         public async Task TryAddAsync_Object_Success(bool expected)
         {
             var key = _fixture.Create<string>();
-            var data = _fixture.Create<object>();
+            var data = new object();
             var timeOut = _fixture.Create<TimeSpan>();
 
-            var value = data.Serialize(_serializerSettings);
+            const string value = "{}";
 
             _dataBase.Setup(b => b.StringSetAsync(key, value, timeOut, 
                     It.IsAny<bool>(), It.IsAny<When>(), It.IsAny<CommandFlags>()))
@@ -244,10 +236,10 @@ namespace GranSteL.Helpers.Redis.Tests
         public void TryAdd_Object_Success(bool expected)
         {
             var key = _fixture.Create<string>();
-            var data = _fixture.Create<object>();
+            var data = new object();
             var timeOut = _fixture.Create<TimeSpan>();
 
-            var value = data.Serialize(_serializerSettings);
+            const string value = "{}";
 
             _dataBase.Setup(b => b.StringSet(key, value, timeOut, 
                     It.IsAny<bool>(), It.IsAny<When>(), It.IsAny<CommandFlags>()))
@@ -266,10 +258,10 @@ namespace GranSteL.Helpers.Redis.Tests
         public async Task TryAddAsync_NotThrowException_False()
         {
             var key = _fixture.Create<string>();
-            var data = _fixture.Create<object>();
+            var data = new object();
             var timeOut = _fixture.Create<TimeSpan>();
 
-            var value = data.Serialize(_serializerSettings);
+            const string value = "{}";
 
             _dataBase.Setup(b => b.StringSetAsync(key, value, timeOut, 
                 It.IsAny<bool>(), It.IsAny<When>(), It.IsAny<CommandFlags>())).Throws<Exception>();
@@ -286,7 +278,7 @@ namespace GranSteL.Helpers.Redis.Tests
         [Test]
         public void TryAddAsync_NullKey_Throws()
         {
-            var data = _fixture.Create<object>();
+            var data = new object();
             var timeOut = _fixture.Create<TimeSpan>();
 
 
@@ -300,10 +292,10 @@ namespace GranSteL.Helpers.Redis.Tests
         public void TryAddAsync_Exception_Throws()
         {
             var key = _fixture.Create<string>();
-            var data = _fixture.Create<object>();
+            var data = new object();
             var timeOut = _fixture.Create<TimeSpan>();
 
-            var value = data.Serialize(_serializerSettings);
+            const string value = "{}";
 
             _dataBase.Setup(b => b.StringSetAsync(key, value, timeOut, 
                 It.IsAny<bool>(), It.IsAny<When>(), It.IsAny<CommandFlags>())).Throws<Exception>();
@@ -319,10 +311,10 @@ namespace GranSteL.Helpers.Redis.Tests
         public void TryAdd_NotThrowException_False()
         {
             var key = _fixture.Create<string>();
-            var data = _fixture.Create<object>();
+            var data = new object();
             var timeOut = _fixture.Create<TimeSpan>();
 
-            var value = data.Serialize(_serializerSettings);
+            const string value = "{}";
 
             _dataBase.Setup(b => b.StringSet(key, value, timeOut, 
                 It.IsAny<bool>(), It.IsAny<When>(), It.IsAny<CommandFlags>())).Throws<Exception>();
@@ -340,10 +332,10 @@ namespace GranSteL.Helpers.Redis.Tests
         public void TryAdd_Exception_Throws()
         {
             var key = _fixture.Create<string>();
-            var data = _fixture.Create<object>();
+            var data = new object();
             var timeOut = _fixture.Create<TimeSpan>();
 
-            var value = data.Serialize(_serializerSettings);
+            const string value = "{}";
 
             _dataBase.Setup(b => b.StringSet(key, value, timeOut, 
                 It.IsAny<bool>(), It.IsAny<When>(), It.IsAny<CommandFlags>())).Throws<Exception>();
@@ -412,9 +404,9 @@ namespace GranSteL.Helpers.Redis.Tests
         {
             var key = _fixture.Create<string>();
 
-            var expected = _fixture.Create<TestType>();
+            var expected = new TestType { Property = "sample", Field = "field" };
 
-            var value = expected.Serialize(_serializerSettings);
+            const string value = "{\"Property\":\"sample\",\"Field\":\"field\"}";
 
             _dataBase.Setup(b => b.StringGetAsync(key, CommandFlags.None)).ReturnsAsync(value);
 
@@ -434,9 +426,9 @@ namespace GranSteL.Helpers.Redis.Tests
         {
             var key = _fixture.Create<string>();
 
-            var expected = _fixture.Create<TestType>();
+            var expected = new TestType { Property = "sample", Field = "field" };
 
-            var value = expected.Serialize(_serializerSettings);
+            const string value = "{\"Property\":\"sample\",\"Field\":\"field\"}";
 
             _dataBase.Setup(b => b.StringGet(key, CommandFlags.None)).Returns(value);
 
@@ -540,9 +532,9 @@ namespace GranSteL.Helpers.Redis.Tests
         {
             var key = _fixture.Create<string>();
 
-            var expected = _fixture.Create<TestType>();
+            var expected = new TestType { Property = "sample", Field = "field" };
 
-            var value = expected.Serialize(_serializerSettings);
+            const string value = "{\"Property\":\"sample\",\"Field\":\"field\"}";
 
             _dataBase.Setup(b => b.StringGet(key, CommandFlags.None)).Returns(value);
 

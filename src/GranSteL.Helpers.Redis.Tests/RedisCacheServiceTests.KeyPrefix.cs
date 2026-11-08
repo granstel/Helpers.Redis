@@ -1,9 +1,7 @@
-﻿using System;
+using System;
 using System.Threading.Tasks;
 using AutoFixture;
-using GranSteL.Helpers.Redis.Extensions;
 using Moq;
-using Newtonsoft.Json;
 using NUnit.Framework;
 using StackExchange.Redis;
 
@@ -22,12 +20,6 @@ namespace GranSteL.Helpers.Redis.Tests
 
         private string _keyPrefix;
 
-        private readonly JsonSerializerSettings _serializerSettings = new JsonSerializerSettings
-        {
-            NullValueHandling = NullValueHandling.Ignore,
-            TypeNameHandling = TypeNameHandling.Auto
-        };
-
         [SetUp]
         public void InitTest()
         {
@@ -39,7 +31,7 @@ namespace GranSteL.Helpers.Redis.Tests
 
             _keyPrefix = _fixture.Create<string>();
 
-            _target = new RedisCacheService(_dataBase.Object, _keyPrefix, _serializerSettings);
+            _target = new RedisCacheService(_dataBase.Object, _keyPrefix);
         }
 
         #region Add
@@ -50,10 +42,10 @@ namespace GranSteL.Helpers.Redis.Tests
         public async Task AddAsync_Object_Success(bool expected)
         {
             var key = _fixture.Create<string>();
-            var data = _fixture.Create<object>();
+            var data = new object();
             var timeOut = _fixture.Create<TimeSpan>();
 
-            var value = data.Serialize(_serializerSettings);
+            const string value = "{}";
 
             var expectedKey = $"{_keyPrefix}{key}";
 
@@ -77,10 +69,10 @@ namespace GranSteL.Helpers.Redis.Tests
         public async Task TryAddAsync_Object_Success(bool expected)
         {
             var key = _fixture.Create<string>();
-            var data = _fixture.Create<object>();
+            var data = new object();
             var timeOut = _fixture.Create<TimeSpan>();
 
-            var value = data.Serialize(_serializerSettings);
+            const string value = "{}";
 
             var expectedKey = $"{_keyPrefix}{key}";
 
@@ -103,10 +95,10 @@ namespace GranSteL.Helpers.Redis.Tests
         public void Add_Object_Success(bool expected)
         {
             var key = _fixture.Create<string>();
-            var data = _fixture.Create<object>();
+            var data = new object();
             var timeOut = _fixture.Create<TimeSpan>();
 
-            var value = data.Serialize(_serializerSettings);
+            const string value = "{}";
 
             var expectedKey = $"{_keyPrefix}{key}";
 
@@ -129,10 +121,10 @@ namespace GranSteL.Helpers.Redis.Tests
         public void TryAdd_Object_Success(bool expected)
         {
             var key = _fixture.Create<string>();
-            var data = _fixture.Create<object>();
+            var data = new object();
             var timeOut = _fixture.Create<TimeSpan>();
 
-            var value = data.Serialize(_serializerSettings);
+            const string value = "{}";
 
             var expectedKey = $"{_keyPrefix}{key}";
 
@@ -158,9 +150,9 @@ namespace GranSteL.Helpers.Redis.Tests
         {
             var key = _fixture.Create<string>();
 
-            var expected = _fixture.Create<TestType>();
+            var expected = new TestType { Property = "sample", Field = "field" };
 
-            var value = expected.Serialize(_serializerSettings);
+            const string value = "{\"Property\":\"sample\",\"Field\":\"field\"}";
 
             var expectedKey = $"{_keyPrefix}{key}";
 
@@ -182,9 +174,9 @@ namespace GranSteL.Helpers.Redis.Tests
         {
             var key = _fixture.Create<string>();
 
-            var expected = _fixture.Create<TestType>();
+            var expected = new TestType { Property = "sample", Field = "field" };
 
-            var value = expected.Serialize(_serializerSettings);
+            const string value = "{\"Property\":\"sample\",\"Field\":\"field\"}";
 
             var expectedKey = $"{_keyPrefix}{key}";
 
@@ -212,9 +204,9 @@ namespace GranSteL.Helpers.Redis.Tests
         {
             var key = _fixture.Create<string>();
 
-            var expected = _fixture.Create<TestType>();
+            var expected = new TestType { Property = "sample", Field = "field" };
 
-            var value = expected.Serialize(_serializerSettings);
+            const string value = "{\"Property\":\"sample\",\"Field\":\"field\"}";
 
             var expectedKey = $"{_keyPrefix}{key}";
 

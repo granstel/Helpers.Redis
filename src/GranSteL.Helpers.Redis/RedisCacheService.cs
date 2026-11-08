@@ -1,31 +1,45 @@
 ﻿using System;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
-using GranSteL.Helpers.Redis.Extensions;
-using Newtonsoft.Json;
 using StackExchange.Redis;
 
 namespace GranSteL.Helpers.Redis
 {
     public class RedisCacheService : IRedisCacheService
     {
-        private readonly IDatabase _dataBase;
-        private readonly string _keyPrefix;
-
-        private readonly JsonSerializerSettings _defaultSerializerSettings = new JsonSerializerSettings
+        private static readonly JsonSerializerOptions DefaultWriteOptions = new JsonSerializerOptions
         {
-            NullValueHandling = NullValueHandling.Ignore,
-            TypeNameHandling = TypeNameHandling.Auto
+            DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
+            IncludeFields = true
         };
 
-        public RedisCacheService(IDatabase dataBase, string keyPrefix = null, JsonSerializerSettings defaultSerializerSettings = null)
+        private static readonly JsonSerializerOptions DefaultReadOptions = new JsonSerializerOptions
+        {
+            IncludeFields = true,
+            PropertyNameCaseInsensitive = true,
+            NumberHandling = JsonNumberHandling.AllowReadingFromString,
+            ReadCommentHandling = JsonCommentHandling.Skip,
+            AllowTrailingCommas = true,
+            Converters = { new JsonStringEnumConverter() }
+        };
+
+        private readonly IDatabase _dataBase;
+        private readonly string _keyPrefix;
+        private readonly JsonSerializerOptions _readOptions;
+        private readonly JsonSerializerOptions _writeOptions;
+
+        public RedisCacheService(IDatabase dataBase, string keyPrefix)
+            : this(dataBase, keyPrefix, null)
+        {
+        }
+
+        public RedisCacheService(IDatabase dataBase, string keyPrefix = null, JsonSerializerOptions defaultSerializerOptions = null)
         {
             _dataBase = dataBase;
             _keyPrefix = keyPrefix;
-
-            if (defaultSerializerSettings != null)
-            {
-                _defaultSerializerSettings = defaultSerializerSettings;
-            }
+            _readOptions = defaultSerializerOptions ?? DefaultReadOptions;
+            _writeOptions = defaultSerializerOptions ?? DefaultWriteOptions;
         }
 
         public async Task<bool> AddAsync(string key, object data, TimeSpan? timeOut = null)
@@ -34,7 +48,7 @@ namespace GranSteL.Helpers.Redis
 
             if (data == null) return false;
 
-            var value = data.Serialize(_defaultSerializerSettings);
+            var value = Serialize(data);
 
             key = GetFullKey(key);
 
@@ -66,7 +80,7 @@ namespace GranSteL.Helpers.Redis
 
             if (data == null) return false;
 
-            var value = data.Serialize(_defaultSerializerSettings);
+            var value = Serialize(data);
 
             key = GetFullKey(key);
 
@@ -106,7 +120,7 @@ namespace GranSteL.Helpers.Redis
 
             if (!string.IsNullOrEmpty(stringValue))
             {
-                data = stringValue.Deserialize<T>(_defaultSerializerSettings);
+                data = Deserialize<T>(stringValue);
             }
 
             return data;
@@ -124,7 +138,7 @@ namespace GranSteL.Helpers.Redis
 
             if (!string.IsNullOrEmpty(value))
             {
-                data = value.Deserialize<T>(_defaultSerializerSettings);
+                data = Deserialize<T>(value);
             }
 
             return data;
@@ -144,7 +158,7 @@ namespace GranSteL.Helpers.Redis
 
                 if (!string.IsNullOrEmpty(value))
                 {
-                    data = value.Deserialize<T>(_defaultSerializerSettings);
+                    data = Deserialize<T>(value);
 
                     return true;
                 }
@@ -190,6 +204,12 @@ namespace GranSteL.Helpers.Redis
 
             return await _dataBase.KeyDeleteAsync(key).ConfigureAwait(false);
         }
+
+        private string Serialize(object data) =>
+            data is string raw ? raw : JsonSerializer.Serialize(data, data.GetType(), _writeOptions);
+
+        private T Deserialize<T>(string value) =>
+            value is T raw ? raw : JsonSerializer.Deserialize<T>(value, _readOptions);
 
         private void ValidateKey(string key)
         {
