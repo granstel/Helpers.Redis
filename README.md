@@ -1,5 +1,4 @@
 # Helpers.Redis
-[![NuGet](https://buildstats.info/nuget/GranSteL.Helpers.Redis)](https://www.nuget.org/packages/GranSteL.Helpers.Redis)
 
 `RedisCacheService` wraps StackExchange.Redis and caches raw strings and System.Text.Json values. The library targets .NET Standard 2.0.
 
