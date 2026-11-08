@@ -17,7 +17,7 @@ PM> `Install-Package GranSteL.Helpers.Redis`
 
 ### Tests
 
-`dotnet test src/GranSteL.Helpers.slnx` runs the unit tests with the SDK pinned in `global.json`. Set `HELPERS_REDIS_TEST_PORT` to the port of a disposable Redis instance on loopback to also run the integration tests.
+`dotnet test` runs the unit tests with the SDK pinned in `global.json`. Set `HELPERS_REDIS_TEST_PORT` to the port of a disposable Redis instance on loopback to also run the integration tests.
 
 ### Publishing
 

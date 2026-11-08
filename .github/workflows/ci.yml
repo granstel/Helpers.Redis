@@ -51,15 +51,15 @@ jobs:
           fi
           echo "value=$version" >> "$GITHUB_OUTPUT"
       - name: Restore and audit all dependencies
-        run: dotnet restore src/GranSteL.Helpers.slnx --configfile nuget.config -p:NuGetAuditMode=all -warnaserror
+        run: dotnet restore --configfile nuget.config -p:NuGetAuditMode=all -warnaserror
       - name: Build
         env:
           VERSION: ${{ steps.version.outputs.value }}
-        run: dotnet build src/GranSteL.Helpers.slnx -c Release --no-restore -p:Version="$VERSION" -p:ContinuousIntegrationBuild=true -warnaserror
+        run: dotnet build -c Release --no-restore -p:Version="$VERSION" -p:ContinuousIntegrationBuild=true -warnaserror
       - name: Test
         env:
           HELPERS_REDIS_TEST_PORT: ${{ job.services.redis.ports['6379'] }}
-        run: dotnet test src/GranSteL.Helpers.slnx -c Release --no-build --no-restore -warnaserror
+        run: dotnet test -c Release --no-build --no-restore -warnaserror
       - name: Pack
         env:
           VERSION: ${{ steps.version.outputs.value }}

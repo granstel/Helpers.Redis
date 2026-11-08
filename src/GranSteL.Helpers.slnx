@@ -1,4 +1,0 @@
-<Solution>
-  <Project Path="GranSteL.Helpers.Redis.Tests/GranSteL.Helpers.Redis.Tests.csproj" />
-  <Project Path="GranSteL.Helpers.Redis/GranSteL.Helpers.Redis.csproj" />
-</Solution>
