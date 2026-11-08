@@ -5,12 +5,21 @@ on:
     branches: [master]
   push:
     branches: [master]
+  workflow_call:
+    inputs:
+      release-tag:
+        required: true
+        type: string
 
 permissions:
   contents: read
 
+defaults:
+  run:
+    shell: bash
+
 jobs:
-  test:
+  build:
     runs-on: ubuntu-24.04
     services:
       redis:
@@ -23,11 +32,46 @@ jobs:
           --health-timeout 2s
           --health-retries 10
     steps:
-      - uses: actions/checkout@v6
-      - uses: actions/setup-dotnet@v6
+      - uses: actions/checkout@v7.0.1
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - uses: actions/setup-dotnet@v6.1.0
         with:
           global-json-file: global.json
-      - name: Build and test
+      - name: Resolve package version
+        id: version
         env:
-          HELPERS_REDIS_TEST_PORT: ${{ job.services.redis.ports[6379] }}
-        run: dotnet test src/GranSteL.Helpers.slnx --configuration Release -warnaserror
+          TAG: ${{ inputs.release-tag || '0.0.0-ci' }}
+        run: |
+          number='(0|[1-9][0-9]*)'
+          identifier='(0|[1-9][0-9]*|[0-9]*[A-Za-z-][0-9A-Za-z-]*)'
+          if [[ ! "$TAG" =~ ^v?${number}\.${number}\.${number}(-${identifier}(\.${identifier})*)?$ ]]; then
+            echo "::error::Use MAJOR.MINOR.PATCH or MAJOR.MINOR.PATCH-prerelease, optionally prefixed by v."
+            exit 1
+          fi
+          echo "value=${TAG#v}" >> "$GITHUB_OUTPUT"
+      - name: Restore and audit all dependencies
+        run: dotnet restore src/GranSteL.Helpers.slnx --configfile nuget.config -p:NuGetAuditMode=all -warnaserror
+      - name: Build
+        env:
+          VERSION: ${{ steps.version.outputs.value }}
+        run: dotnet build src/GranSteL.Helpers.slnx -c Release --no-restore -p:Version="$VERSION" -p:ContinuousIntegrationBuild=true -warnaserror
+      - name: Test
+        env:
+          HELPERS_REDIS_TEST_PORT: ${{ job.services.redis.ports['6379'] }}
+        run: dotnet test src/GranSteL.Helpers.slnx -c Release --no-build --no-restore -warnaserror
+      - name: Pack
+        env:
+          VERSION: ${{ steps.version.outputs.value }}
+        run: >-
+          dotnet pack src/GranSteL.Helpers.Redis/GranSteL.Helpers.Redis.csproj
+          -c Release --no-build -o package -p:Version="$VERSION"
+          -p:ContinuousIntegrationBuild=true -p:RepositoryCommit="$GITHUB_SHA" -warnaserror
+      - uses: actions/upload-artifact@v7.0.2
+        with:
+          name: nuget-package
+          path: package/GranSteL.Helpers.Redis.${{ steps.version.outputs.value }}.nupkg
+          if-no-files-found: error
+          overwrite: true
+          retention-days: 30

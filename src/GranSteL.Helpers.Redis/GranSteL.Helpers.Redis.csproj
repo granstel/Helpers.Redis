@@ -3,8 +3,8 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <OutputType>Library</OutputType>
-    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    
+    <PackageId>GranSteL.Helpers.Redis</PackageId>
+
     <Title>Redis helpers</Title>
     <Description>
       RedisCacheService: a wrapper around StackExchange.Redis for caching raw strings and System.Text.Json values.
@@ -13,7 +13,7 @@
     <Authors>GranSteL</Authors>
     <PackageProjectUrl>https://github.com/granstel/Helpers.Redis</PackageProjectUrl>
     <RepositoryUrl>https://github.com/granstel/Helpers.Redis</RepositoryUrl>
-    <RepositoryType>Github</RepositoryType>
+    <RepositoryType>git</RepositoryType>
     <PackageTags>Redis helper, serialization, cache, redis</PackageTags>
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
     <PackageReadmeFile>README.md</PackageReadmeFile>
@@ -21,7 +21,6 @@
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
 
     <Version>2.0.0</Version>
-    <PackageReleaseNotes>Replace Newtonsoft.Json with System.Text.Json. See the README for migration details.</PackageReleaseNotes>
   </PropertyGroup>
 
   <ItemGroup>
