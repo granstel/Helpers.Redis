@@ -8,6 +8,7 @@ permissions: {}
 
 concurrency:
   group: release-${{ github.event.release.id }}
+  cancel-in-progress: false
 
 defaults:
   run:
@@ -15,85 +16,114 @@ defaults:
 
 jobs:
   build:
+    uses: ./.github/workflows/ci.yml
     permissions:
       contents: read
-    uses: ./.github/workflows/ci.yml
+      actions: read
     with:
       release-tag: ${{ github.event.release.tag_name }}
 
-  attach:
-    name: Attach package to GitHub Release
+  attach-package:
     needs: build
     runs-on: ubuntu-24.04
     permissions:
+      actions: read
       contents: write
     steps:
       - uses: actions/download-artifact@v8.0.2
         with:
           name: nuget-package
           path: package
-      - name: Upload release asset
+          github-token: ${{ github.token }}
+          run-id: ${{ github.run_id }}
+      - name: Attach package to GitHub Release
         env:
           GH_TOKEN: ${{ github.token }}
           RELEASE_ID: ${{ github.event.release.id }}
-          TAG: ${{ github.event.release.tag_name }}
+          RELEASE_TAG: ${{ github.event.release.tag_name }}
         run: |
-          files=(package/*.nupkg)
-          package="${files[0]}"
-          digest="sha256:$(sha256sum "$package" | cut -d ' ' -f1)"
-          existing=$(gh api --paginate "repos/$GITHUB_REPOSITORY/releases/$RELEASE_ID/assets" |
-            jq -r --arg name "${package##*/}" '.[] | select(.name == $name) | (.digest // "missing")')
-          if [[ -z "$existing" ]]; then
-            gh release upload "$TAG" "$package" --repo "$GITHUB_REPOSITORY"
-          elif [[ "$existing" != "$digest" ]]; then
-            echo "::error::The release already contains an asset with the same name and different content."
+          shopt -s nullglob
+          packages=(package/*.nupkg)
+          if (( ${#packages[@]} != 1 )); then
+            echo '::error::Expected exactly one NuGet package.'
             exit 1
           fi
+          package="${packages[0]}"
+          name="${package##*/}"
+          digest="sha256:$(sha256sum "$package" | cut -d ' ' -f 1)"
+          asset=$(gh api --paginate --slurp "repos/$GITHUB_REPOSITORY/releases/$RELEASE_ID/assets" |
+            jq -c --arg name "$name" '[.[][] | select(.name == $name)] | first // empty')
+          if [[ -n "$asset" ]]; then
+            if jq -e --arg digest "$digest" '.state == "uploaded" and .digest == $digest' <<< "$asset" > /dev/null; then
+              exit 0
+            fi
+            if ! jq -e '.state == "starter" and .size == 0' <<< "$asset" > /dev/null; then
+              echo "::error::Release asset $name already exists with different content."
+              exit 1
+            fi
+            asset_id=$(jq -r '.id' <<< "$asset")
+            gh api --method DELETE "repos/$GITHUB_REPOSITORY/releases/assets/$asset_id" --silent
+          fi
+          gh release upload "$RELEASE_TAG" "$package" --repo "$GITHUB_REPOSITORY"
 
-  nuget:
-    name: Publish to NuGet.org
-    needs: attach
+  publish-nuget:
+    needs: attach-package
     runs-on: ubuntu-24.04
     environment: nuget
     permissions:
+      actions: read
+      contents: read
       id-token: write
     steps:
+      - uses: actions/checkout@v7.0.1
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - uses: actions/setup-dotnet@v6.1.0
+        with:
+          global-json-file: global.json
       - uses: actions/download-artifact@v8.0.2
         with:
           name: nuget-package
           path: package
-      - name: NuGet login
+          github-token: ${{ github.token }}
+          run-id: ${{ github.run_id }}
+      - uses: NuGet/login@v1.2.0
         id: login
-        uses: NuGet/login@v1.2.0
         with:
           user: ${{ secrets.NUGET_USER }}
-      - name: Push package
+      - name: Publish to NuGet.org
         env:
           NUGET_API_KEY: ${{ steps.login.outputs.NUGET_API_KEY }}
         run: dotnet nuget push package/*.nupkg --source https://api.nuget.org/v3/index.json --api-key "$NUGET_API_KEY" --skip-duplicate
 
-  github-packages:
-    name: Publish to GitHub Packages
-    needs: attach
+  publish-github-packages:
+    needs: attach-package
     runs-on: ubuntu-24.04
     permissions:
+      actions: read
+      contents: read
       packages: write
     steps:
+      - uses: actions/checkout@v7.0.1
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - uses: actions/setup-dotnet@v6.1.0
+        with:
+          global-json-file: global.json
       - uses: actions/download-artifact@v8.0.2
         with:
           name: nuget-package
           path: package
-      - name: Push package
+          github-token: ${{ github.token }}
+          run-id: ${{ github.run_id }}
+      - name: Publish to GitHub Packages
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
           config="$RUNNER_TEMP/github-nuget.config"
-          cat > "$config" <<EOF
-          <configuration>
-            <packageSources>
-              <add key="github" value="https://nuget.pkg.github.com/$GITHUB_REPOSITORY_OWNER/index.json" />
-            </packageSources>
-          </configuration>
-          EOF
+          printf '<configuration><packageSources><clear /></packageSources></configuration>\n' > "$config"
+          dotnet nuget add source "https://nuget.pkg.github.com/$GITHUB_REPOSITORY_OWNER/index.json" --name github --configfile "$config"
           export NuGetPackageSourceCredentials_github="Username=$GITHUB_ACTOR;Password=$GH_TOKEN;ValidAuthenticationTypes=Basic"
-          dotnet nuget push package/*.nupkg --configfile "$config" --source github --api-key "$GH_TOKEN" --skip-duplicate
+          dotnet nuget push package/*.nupkg --source github --configfile "$config" --api-key "$GH_TOKEN" --skip-duplicate
