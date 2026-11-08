@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
@@ -26,7 +26,7 @@
 
   <ItemGroup>
     <PackageReference Include="System.Text.Json" Version="10.0.14" />
-    <PackageReference Include="StackExchange.Redis" Version="2.6.80" />
+    <PackageReference Include="StackExchange.Redis" Version="3.4.31" />
   </ItemGroup>
 
   <ItemGroup>

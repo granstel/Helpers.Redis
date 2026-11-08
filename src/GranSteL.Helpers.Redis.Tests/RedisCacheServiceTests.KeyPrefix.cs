@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using AutoFixture;
 using Moq;
 using NUnit.Framework;
+using NUnit.Framework.Legacy;
 using StackExchange.Redis;
 
 namespace GranSteL.Helpers.Redis.Tests
@@ -59,7 +60,7 @@ namespace GranSteL.Helpers.Redis.Tests
 
             _mockRepository.VerifyAll();
 
-            Assert.AreEqual(expected, result);
+            ClassicAssert.AreEqual(expected, result);
 
         }
 
@@ -86,7 +87,7 @@ namespace GranSteL.Helpers.Redis.Tests
 
             _mockRepository.VerifyAll();
 
-            Assert.AreEqual(expected, result);
+            ClassicAssert.AreEqual(expected, result);
         }
 
         [Test]
@@ -112,7 +113,7 @@ namespace GranSteL.Helpers.Redis.Tests
 
             _mockRepository.VerifyAll();
 
-            Assert.AreEqual(expected, result);
+            ClassicAssert.AreEqual(expected, result);
         }
 
         [Test]
@@ -138,7 +139,7 @@ namespace GranSteL.Helpers.Redis.Tests
 
             _mockRepository.VerifyAll();
 
-            Assert.AreEqual(expected, result);
+            ClassicAssert.AreEqual(expected, result);
         }
 
         #endregion Add
@@ -164,9 +165,9 @@ namespace GranSteL.Helpers.Redis.Tests
 
             _mockRepository.VerifyAll();
 
-            Assert.NotNull(data);
-            Assert.AreEqual(expected.Property, data.Property);
-            Assert.AreEqual(expected.Field, data.Field);
+            ClassicAssert.NotNull(data);
+            ClassicAssert.AreEqual(expected.Property, data.Property);
+            ClassicAssert.AreEqual(expected.Field, data.Field);
         }
 
         [Test]
@@ -188,9 +189,9 @@ namespace GranSteL.Helpers.Redis.Tests
 
             _mockRepository.VerifyAll();
 
-            Assert.NotNull(data);
-            Assert.AreEqual(expected.Property, data.Property);
-            Assert.AreEqual(expected.Field, data.Field);
+            ClassicAssert.NotNull(data);
+            ClassicAssert.AreEqual(expected.Property, data.Property);
+            ClassicAssert.AreEqual(expected.Field, data.Field);
         }
 
         #endregion
@@ -218,10 +219,10 @@ namespace GranSteL.Helpers.Redis.Tests
 
             _mockRepository.VerifyAll();
 
-            Assert.True(result);
-            Assert.NotNull(data);
-            Assert.AreEqual(expected.Property, data.Property);
-            Assert.AreEqual(expected.Field, data.Field);
+            ClassicAssert.True(result);
+            ClassicAssert.NotNull(data);
+            ClassicAssert.AreEqual(expected.Property, data.Property);
+            ClassicAssert.AreEqual(expected.Field, data.Field);
         }
 
         #endregion TryGet
@@ -245,7 +246,7 @@ namespace GranSteL.Helpers.Redis.Tests
 
             _mockRepository.VerifyAll();
 
-            Assert.AreEqual(expected, result);
+            ClassicAssert.AreEqual(expected, result);
         }
 
         [Test]
@@ -265,7 +266,7 @@ namespace GranSteL.Helpers.Redis.Tests
 
             _mockRepository.VerifyAll();
 
-            Assert.AreEqual(expected, result);
+            ClassicAssert.AreEqual(expected, result);
         }
 
         #endregion Exists
@@ -289,7 +290,7 @@ namespace GranSteL.Helpers.Redis.Tests
 
             _mockRepository.VerifyAll();
 
-            Assert.AreEqual(expected, result);
+            ClassicAssert.AreEqual(expected, result);
         }
 
         #endregion DeleteAsync
