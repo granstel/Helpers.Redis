@@ -7,8 +7,7 @@
     
     <Title>Redis helpers</Title>
     <Description>
-      RedisCacheService: simple wrapper on StackExchange.Redis, that can help you to create, read, check existing, 
-      and delete data at JSON format with own serialization (based on Newtonsoft.Json).
+      RedisCacheService: a wrapper around StackExchange.Redis for caching raw strings and System.Text.Json values.
     </Description>
 
     <Authors>GranSteL</Authors>
@@ -17,15 +16,16 @@
     <RepositoryType>Github</RepositoryType>
     <PackageTags>Redis helper, serialization, cache, redis</PackageTags>
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
     <Language>C#</Language>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
 
-    <Version>1.1.0</Version>
-    <PackageReleaseNotes>Internal SerializationExtensions, upgraded packages</PackageReleaseNotes>
+    <Version>2.0.0</Version>
+    <PackageReleaseNotes>Replace Newtonsoft.Json with System.Text.Json. See the README for migration details.</PackageReleaseNotes>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Newtonsoft.Json" Version="13.0.2" />
+    <PackageReference Include="System.Text.Json" Version="10.0.14" />
     <PackageReference Include="StackExchange.Redis" Version="2.6.80" />
   </ItemGroup>
 
@@ -34,6 +34,7 @@
       <Pack>True</Pack>
       <PackagePath>.</PackagePath>
     </None>
+    <None Include="..\..\README.md" Pack="True" PackagePath="." />
   </ItemGroup>
 
 </Project>
