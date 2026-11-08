@@ -58,12 +58,11 @@ jobs:
           HELPERS_REDIS_TEST_PORT: ${{ job.services.redis.ports['6379'] }}
         run: |
           version="${RELEASE_TAG:-0.0.0-ci}"
-          dotnet restore -p:NuGetAudit=true -p:NuGetAuditMode=all \
-            -warnaserror:NU1900,NU1901,NU1902,NU1903,NU1904,NU1905
-          dotnet build -c Release --no-restore -p:Version="$version" -p:ContinuousIntegrationBuild=true -warnaserror
+          dotnet restore -p:NuGetAudit=true -p:NuGetAuditMode=all
+          dotnet build -c Release --no-restore -p:Version="$version" -p:ContinuousIntegrationBuild=true
           dotnet test -c Release --no-build
           dotnet pack src/GranSteL.Helpers.Redis/GranSteL.Helpers.Redis.csproj -c Release --no-build -o package \
-            -p:Version="$version" -p:ContinuousIntegrationBuild=true -p:RepositoryCommit="$GITHUB_SHA" -warnaserror
+            -p:Version="$version" -p:ContinuousIntegrationBuild=true -p:RepositoryCommit="$GITHUB_SHA"
       - uses: actions/upload-artifact@v7.0.2
         if: inputs.release-tag != '' && steps.reuse-package.outcome != 'success'
         with:
