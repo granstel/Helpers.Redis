@@ -42,15 +42,18 @@ jobs:
       - name: Resolve package version
         id: version
         env:
-          TAG: ${{ inputs.release-tag || '0.0.0-ci' }}
+          RELEASE_TAG: ${{ inputs.release-tag }}
         run: |
-          number='(0|[1-9][0-9]*)'
-          identifier='(0|[1-9][0-9]*|[0-9]*[A-Za-z-][0-9A-Za-z-]*)'
-          if [[ ! "$TAG" =~ ^v?${number}\.${number}\.${number}(-${identifier}(\.${identifier})*)?$ ]]; then
-            echo "::error::Use MAJOR.MINOR.PATCH or MAJOR.MINOR.PATCH-prerelease, optionally prefixed by v."
-            exit 1
+          if [[ "$GITHUB_EVENT_NAME" == release ]]; then
+            version="$RELEASE_TAG"
+            if [[ ! "$version" =~ ^(0|[1-9][0-9]*)[.](0|[1-9][0-9]*)[.](0|[1-9][0-9]*)$ ]]; then
+              echo '::error::Release tag must be MAJOR.MINOR.PATCH (for example, 2.1.0).'
+              exit 1
+            fi
+          else
+            version='0.0.0-ci'
           fi
-          echo "value=${TAG#v}" >> "$GITHUB_OUTPUT"
+          echo "value=$version" >> "$GITHUB_OUTPUT"
       - name: Restore and audit all dependencies
         run: dotnet restore src/GranSteL.Helpers.slnx --configfile nuget.config -p:NuGetAuditMode=all -warnaserror
       - name: Build
