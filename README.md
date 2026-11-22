@@ -13,7 +13,7 @@ PM> `Install-Package GranSteL.Helpers.Redis`
 - Strings are still stored verbatim. An empty string can mark an existing key, but `Get<T>` and `GetAsync<T>` return `default` and `TryGet<T>` returns `false` for that value. Key prefixes, TTL, and overwrite behavior are unchanged.
 - The default writer keeps CLR member names (typically PascalCase), includes public fields, and omits null members. The default reader accepts case differences, quoted numbers, and enum names. JSON property order and escaping may change.
 - Read old JSON using the concrete type, including concrete types for nested values. Old `$type` metadata cannot select CLR types; new values carry no CLR type names by default. If you relied on automatic polymorphism or old `$values` collection wrappers, use an explicit System.Text.Json converter for known types or invalidate those entries.
-- Review Newtonsoft.Json attributes, converters, and permissive conversions used by your models. In particular, explicit JSON nulls can now replace initialized members, values inside an `object` member may deserialize as `JsonElement`, and JSON errors now come from System.Text.Json. The System.Text.Json 10 dependency can report support warnings on older .NET runtimes.
+- Review Newtonsoft.Json attributes, converters, and permissive conversions used by your models. In particular, explicit JSON nulls can now replace initialized members, values inside an `object` member may deserialize as `JsonElement`, and JSON errors now come from System.Text.Json. The System.Text.Json dependency can report support warnings on older .NET runtimes.
 
 ### Tests
 
