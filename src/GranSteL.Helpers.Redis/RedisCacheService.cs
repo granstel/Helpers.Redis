@@ -52,7 +52,7 @@ namespace GranSteL.Helpers.Redis
 
             key = GetFullKey(key);
 
-            return await _dataBase.StringSetAsync(key, value, timeOut).ConfigureAwait(false);
+            return await _dataBase.StringSetAsync(key, value, timeOut, keepTtl: false, When.Always, CommandFlags.None).ConfigureAwait(false);
         }
 
         public async Task<bool> TryAddAsync(string key, object data, TimeSpan? timeOut = null, bool throwException = false)
@@ -84,7 +84,7 @@ namespace GranSteL.Helpers.Redis
 
             key = GetFullKey(key);
 
-            return _dataBase.StringSet(key, value, timeOut);
+            return _dataBase.StringSet(key, value, timeOut, keepTtl: false, When.Always, CommandFlags.None);
         }
 
         public bool TryAdd(string key, object data, TimeSpan? timeOut = null, bool throwException = false)
